@@ -1,0 +1,18 @@
+# CONFIG FILE FOR 
+
+CONFIGURATIONS = {
+    "": {
+        "getsection": "",
+        "gettitle": "",
+        "gettype": "",
+        "getgenre": "",
+        "getstatus": "",
+        "getchapterlist": "",
+        "getcover": "",
+        "getchaptertitle": "",
+        "readdiv": "",
+        "delaylist": False,
+        "readjson": False,
+        "readencrypt": False
+    }
+}
