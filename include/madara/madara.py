@@ -19,6 +19,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 # General
 from include.madara.general import kapimanga
+from include.madara.general import chocomanga
+from include.madara.general import moritoon
+from include.madara.general import mangalc
+from include.madara.general import manhuathai
+
 
 # Adult
 
@@ -75,6 +80,14 @@ def getConfig(url):
 
     if domain == "kapimanga.com":
         return kapimanga.CONFIGURATIONS.get(domain)
+    elif domain == "chocomanga.com":
+        return chocomanga.CONFIGURATIONS.get(domain)
+    elif domain == "moritoon.com":
+        return moritoon.CONFIGURATIONS.get(domain)
+    elif domain == "manga-lc.net":
+        return mangalc.CONFIGURATIONS.get(domain)
+    elif domain == "manhuathai.com":
+        return manhuathai.CONFIGURATIONS.get(domain)
     else:
         return None
 
@@ -229,7 +242,7 @@ def fetchmanga(url):
         chapterslist = ''
 
     start = end = None
-    showchapters = True
+    showchapters = False
     if chapterslist:
         data_num = ''
         first_chapter = chapterslist[0]
@@ -286,6 +299,9 @@ def fetchmanga(url):
         chapterslink = []
         for i, chapter in enumerate(chapterslist):
             url = chapter.find('a')['href']
+            if not url.startswith('https'):
+                break
+
             try:
                 title = chapter.find('a')['title']
             except:
@@ -298,11 +314,6 @@ def fetchmanga(url):
             else:
                 pass
             chapterslink.append(parseurl)
-        else:
-            if showchapters is True:
-                return None
-            else:
-                pass
         
         aftercount = len(chapterslink)
     else:
@@ -314,11 +325,12 @@ def fetchmanga(url):
     # Cover
     try:
         cover = section.select_one(getcover)
-        mgCover = mgCover = cover['src'] if 'src' in cover.attrs else cover['data-src'] if 'data-src' in cover.attrs else None
+        mgCover = cover['data-src'] if 'data-src' in cover.attrs else cover['src'] if 'src' in cover.attrs else None
     except Exception as e:
         print(f"Error finding cover from {getcover}: {e}")
         mgCover = ''
     print(f"Cover: {mgCover}")
+    
 
     
     folderName = os.path.join(output, mgTitle)
@@ -333,23 +345,21 @@ def fetchmanga(url):
             print(f"Image {cover_name} already exists. Trying to check file integrity...")
             compare_result = main.compare_size(mgCover, cover_path, cover_name, logfile)
             if compare_result is False:
-                time = gettime()
-                main.write_file(logfile, f"{time}: The size of image {mgCover} from {url} not compared.\n")
-                return None
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The size of image {mgCover} from {url} not compared.\n")
         else:
             dl_result = main.dl_img(mgCover, cover_path, cover_name, logfile)
             if dl_result is False:
                 print(f"Error to downloading {url}.")
-                time = gettime()
-                main.write_file(logfile, f"{time}: Failed to download the image {mgCover} from {url}.\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: Failed to download the image {mgCover} from {url}.\n")
                 return None
             else:
                 print(f'{mgCover} => {cover_name}')
                 compare_result = main.compare_size(mgCover, cover_path, cover_name, logfile)
                 if compare_result is False:
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: The size of image {mgCover} from {url} not compared.\n")
-                    return None
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: The size of image {mgCover} from {url} not compared.\n")
 
 
     skipdomains = ['googleusercontent.com',
@@ -372,7 +382,7 @@ def fetchmanga(url):
         'picz.in.th'
     ]
 
-    threads = 4
+    threads = 1
     # Start process chapters with multi-threaded
     workers = threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
@@ -414,8 +424,8 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
             chapter = main.getchapter(mangaID, chapterID)
         except Exception as e:
             print(f"Error: {e}")
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find chapter number from {chapterURL}\n")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to find chapter number from {chapterURL}\n")
             return None
         
     chapterFoldername = f"Chapter-{chapter}"
@@ -438,14 +448,14 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
 
             if not file_extension:
                 print(f"Image link {img} has no extension. Skipping...")
-                time = gettime()
-                main.write_file(logfile, f"{time}: The image not have extenstion from {chapterURL}\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The image not have extenstion from {chapterURL}\n")
                 return None
 
             if any(skip_domain in img for skip_domain in skipdomains):
                 print(f"Image link {img} has skip domain. Skipping...")
-                time = gettime()
-                main.write_file(logfile, f"{time}: The image found in skip domain from {chapterURL}\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The image found in skip domain from {chapterURL}\n")
                 return None
             
             # Set image and link file name.
@@ -459,44 +469,26 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                 print(f"Image {image_name} already exists. Trying to check file integrity...")
                 compare_result = main.compare_size(img, image_path, image_name, logfile)
                 if compare_result is False:
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: The size of image {img} from {chapterURL} not compared.\n")
-                    return None
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
             else:
                 dl_result = main.dl_img(img, image_path, image_name, logfile)
                 if dl_result is False:
                     print(f"Error to downloading {url}.")
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: Failed to download the image {img} from {chapterURL}.\n")
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: Failed to download the image {img} from {chapterURL}.\n")
                     return None
                 else:
                     print(f'{img} => {image_name}')
                     compare_result = main.compare_size(img, image_path, image_name, logfile)
                     if compare_result is False:
-                        time = gettime()
-                        main.write_file(logfile, f"{time}: The size of image {img} from {chapterURL} not compared.\n")
-                        return None
+                        currentTime = gettime()
+                        main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
 
 def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, logfile):
     image_list = []
     if readjson is True:
-        try:
-            print(f"Trying to find images from {chapterURL}...")
-            script = soup.find("script", string=re.compile(r'ts_reader\.run'))
-            # Extract the JSON-like text from the script tag
-            pattern = r'ts_reader\.run\((.+?)\);'
-            match = re.search(pattern, script.string)
-            if match:
-                json_data = json.loads(match.group(1))
-                # Check for 'sources' in JSON data and extract image links
-                if 'sources' in json_data and len(json_data['sources']) > 0:
-                    image_list = json_data['sources'][0].get('images', [])
-        except:
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find image urls from {chapterURL}.\n")
-            return None
-        
-        return image_list
+        print()
     elif readencrypt is True:
         options = Options()
         driver = webdriver.Chrome(options=options)
@@ -509,24 +501,25 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
             )
 
             rmElements(driver, readdiv)
+            dc_windowsize(driver)
             captureimg(driver, readdiv, chapter, chapterPath)
 
         except Exception as e:
             print(f"Error: {e}")
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to capture webpage from {chapterURL}.\n")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to capture webpage from {chapterURL}.\n")
             return None
         
         driver.quit()
         return True
     else:
         try:
-            reader = soup.select(readdiv)
+            reader = soup.select_one(readdiv)
             imgtags = reader.find_all('img')
-            image_list = [img['src'] for img in imgtags]
+            image_list = [img['data-src'] if 'data-src' in img.attrs else img['src'] if 'src' in img.attrs else None for img in imgtags]
         except:
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find image urls from {chapterURL}.\n")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to find image urls from {chapterURL}.\n")
             return None
         
         return image_list
@@ -585,30 +578,46 @@ def rmElements(driver, readdiv):
         """
     )
 
-    # Set width to auto for specified images
+    # Define the CSS styles you want to inject
+    css_styles = """
+    .reading-manga,.content-area,.site-content,.container,.row,.col-md-12,.main-col-inner,.reading-manga,.reading-content,#manga-reading-nav-head,.entry-header,.read-container {
+        width: 100%!important;
+        max-width: 100%!important;
+        margin: unset!important;
+        padding: unset!important;
+    }
+    """
+
+    # Inject the <style> tag with the defined CSS styles into the <head> of the webpage
     driver.execute_script("""
-        var windowWidth = window.innerWidth + 'px';
-        var container = document.querySelectorAll('.container');
-        container.forEach(function(div) {
-            div.style.width = windowWidth;
-            div.style.margin = 'unset';
-            div.style.padding = 'unset';
-        });
-    """)
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = arguments[0];
+        document.head.appendChild(style);
+    """, css_styles)
 
     driver.execute_script("""
         var images = document.querySelectorAll('img');
         images.forEach(function(img) {
-            img.style.width = '100%';
-            img.style.margin = 'unset';
-            img.style.padding = 'unset';
+            img.style.width = '100%!important';
+            img.style.margin = 'unset!important';
+            img.style.padding = 'unset!important';
         });
     """)
 
+    # Execute JavaScript to remove <br> tags
     driver.execute_script("""
-        var container = document.querySelectorAll('.scrollToTop');
-        container.forEach(function(div) {
-            div.style.opacity = '0';
+        var brTags = document.querySelectorAll('br');
+        brTags.forEach(function(br) {
+            br.remove();
+        });
+    """)
+
+    # Execute JavaScript to remove <a> tags along with their associated <img> tags
+    driver.execute_script("""
+        var aTags = document.querySelectorAll('a');
+        aTags.forEach(function(a) {
+            a.parentNode.removeChild(a);
         });
     """)
 
@@ -658,8 +667,31 @@ def captureimg(driver, readdiv, chapter, chapterPath):
         if i != 0:
             # Scroll down by a certain amount
             driver.execute_script(f"window.scrollBy(0, {image_height});")
-            time.sleep(0.6)
+            time.sleep(0.3)
         # Save the image to a file
         image_path = os.path.join(chapterPath, f"Chapter-{chapter}_image_{i}.png")
-        driver.save_screenshot(image_path)
+        target.screenshot(image_path)
+        #driver.save_screenshot(image_path)
         print(f"Saved to {image_path} successfully")
+
+def dc_windowsize(driver):
+    # Get the current window size
+    current_size = driver.get_window_size()
+
+    # Decrease the width and height by 1 pixel
+    width = current_size['width'] - 1
+    height = current_size['height']
+
+    # Set the new window size
+    driver.set_window_size(width, height)
+    time.sleep(1)
+
+    # Get the current window size
+    current_size = driver.get_window_size()
+
+    # Decrease the width and height by 1 pixel
+    width = current_size['width'] - 1
+    height = current_size['height']
+
+    # Set the new window size
+    driver.set_window_size(width, height)
