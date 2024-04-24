@@ -23,6 +23,7 @@ from include.mangareader.general import manga168
 from include.mangareader.general import thaimanga
 from include.mangareader.general import singmanga
 from include.mangareader.general import manga689
+from include.mangareader.general import dragonmanga
 
 # Adult
 from include.mangareader.adult import toonhunter
@@ -89,6 +90,8 @@ def getConfig(url):
         return manga689.CONFIGURATIONS.get(domain)
     elif domain == "toonhunter.com":
         return toonhunter.CONFIGURATIONS.get(domain)
+    elif domain == "dragon-manga.com":
+        return dragonmanga.CONFIGURATIONS.get(domain)
     else:
         return None
 
@@ -263,7 +266,7 @@ def fetchmanga(url):
         chapterslist = ''
 
     start = end = None
-    showchapters = True
+    showchapters = False
     if chapterslist:
         data_num = ''
         first_chapter = chapterslist[0]
@@ -348,7 +351,7 @@ def fetchmanga(url):
     # Cover
     try:
         cover = section.select_one(getcover)
-        mgCover = mgCover = cover['src'] if 'src' in cover.attrs else cover['data-src'] if 'data-src' in cover.attrs else None
+        mgCover = mgCover = cover['data-src'] if 'data-src' in cover.attrs else cover['src'] if 'src' in cover.attrs else None
     except Exception as e:
         print(f"Error finding cover from {getcover}: {e}")
         mgCover = ''
@@ -367,23 +370,21 @@ def fetchmanga(url):
             print(f"Image {cover_name} already exists. Trying to check file integrity...")
             compare_result = main.compare_size(mgCover, cover_path, cover_name, logfile)
             if compare_result is False:
-                time = gettime()
-                main.write_file(logfile, f"{time}: The size of image {mgCover} from {url} not compared.\n")
-                return None
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The size of image {mgCover} from {url} not compared.\n")
         else:
             dl_result = main.dl_img(mgCover, cover_path, cover_name, logfile)
             if dl_result is False:
                 print(f"Error to downloading {url}.")
-                time = gettime()
-                main.write_file(logfile, f"{time}: Failed to download the image {mgCover} from {url}.\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: Failed to download the image {mgCover} from {url}.\n")
                 return None
             else:
                 print(f'{mgCover} => {cover_name}')
                 compare_result = main.compare_size(mgCover, cover_path, cover_name, logfile)
                 if compare_result is False:
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: The size of image {mgCover} from {url} not compared.\n")
-                    return None
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: The size of image {mgCover} from {url} not compared.\n")
 
 
     skipdomains = ['googleusercontent.com',
@@ -448,8 +449,8 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
             chapter = main.getchapter(mangaID, chapterID)
         except Exception as e:
             print(f"Error: {e}")
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find chapter number from {chapterURL}\n")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to find chapter number from {chapterURL}\n")
             return None
         
     chapterFoldername = f"Chapter-{chapter}"
@@ -472,14 +473,14 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
 
             if not file_extension:
                 print(f"Image link {img} has no extension. Skipping...")
-                time = gettime()
-                main.write_file(logfile, f"{time}: The image not have extenstion from {chapterURL}\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The image not have extenstion from {chapterURL}\n")
                 return None
 
             if any(skip_domain in img for skip_domain in skipdomains):
                 print(f"Image link {img} has skip domain. Skipping...")
-                time = gettime()
-                main.write_file(logfile, f"{time}: The image found in skip domain from {chapterURL}\n")
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The image found in skip domain from {chapterURL}\n")
                 return None
             
             # Set image and link file name.
@@ -493,23 +494,21 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                 print(f"Image {image_name} already exists. Trying to check file integrity...")
                 compare_result = main.compare_size(img, image_path, image_name, logfile)
                 if compare_result is False:
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: The size of image {img} from {chapterURL} not compared.\n")
-                    return None
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
             else:
                 dl_result = main.dl_img(img, image_path, image_name, logfile)
                 if dl_result is False:
                     print(f"Error to downloading {url}.")
-                    time = gettime()
-                    main.write_file(logfile, f"{time}: Failed to download the image {img} from {chapterURL}.\n")
+                    currentTime = gettime()
+                    main.write_file(logfile, f"{currentTime}: Failed to download the image {img} from {chapterURL}.\n")
                     return None
                 else:
                     print(f'{img} => {image_name}')
                     compare_result = main.compare_size(img, image_path, image_name, logfile)
                     if compare_result is False:
-                        time = gettime()
-                        main.write_file(logfile, f"{time}: The size of image {img} from {chapterURL} not compared.\n")
-                        return None
+                        currentTime = gettime()
+                        main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
 
 def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, logfile):
     image_list = []
@@ -555,12 +554,12 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
         return True
     else:
         try:
-            reader = soup.select(readdiv)
+            reader = soup.select_one(readdiv)
             imgtags = reader.find_all('img')
-            image_list = [img['src'] for img in imgtags]
+            image_list = [img['data-src'] if 'data-src' in img.attrs else img['src'] if 'src' in img.attrs else None for img in imgtags]
         except:
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find image urls from {chapterURL}.\n")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to find image urls from {chapterURL}.\n")
             return None
         
         return image_list
