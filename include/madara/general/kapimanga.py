@@ -1,4 +1,4 @@
-# CONFIG FILE FOR 
+# CONFIG FILE FOR KAPIMANGA.COM
 
 CONFIGURATIONS = {
     "kapimanga.com": {
