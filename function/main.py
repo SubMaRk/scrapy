@@ -145,13 +145,16 @@ def compare_size(url, path, title, log_path):
                 print("Image file size and content size are matched.")
                 match = True
             else:
-                match = False
                 print("Image file size and content size do not match.")
                 print(f"Image file size: {local_file_size} bytes")
                 print(f"Content size: {content_size} bytes")
                 print(f"Trying to download {url} again...")
                 os.remove(path)
-                dl_img(url, path, title, log_path)
+                dl = dl_img(url, path, title, log_path)
+                if dl == True:
+                    match = True
+                else:
+                    match = False
     else:
         match = False
     return match
