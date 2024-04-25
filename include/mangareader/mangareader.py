@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import urllib.parse
 import re
 import os
+import random
 import json
 import concurrent.futures
 from selenium import webdriver
@@ -24,9 +25,23 @@ from include.mangareader.general import thaimanga
 from include.mangareader.general import singmanga
 from include.mangareader.general import manga689
 from include.mangareader.general import dragonmanga
+from include.mangareader.general import mangakimi
+from include.mangareader.general import mangastep
+from include.mangareader.general import reapertrans
+from include.mangareader.general import tanukimanga
+from include.mangareader.general import spymanga
+from include.mangareader.general import mafiamanga
+from include.mangareader.general import xenonmanga
+from include.mangareader.general import manga108
+from include.mangareader.general import asurahunter
+from include.mangareader.general import flashmanga
+from include.mangareader.general import sodsaime
+from include.mangareader.general import murimmanga
+from include.mangareader.general import moodtoon
 
 # Adult
 from include.mangareader.adult import toonhunter
+from include.mangareader.adult import ntrmanga
 
 def get_user_agent():
     # Get all the latest user agents
@@ -92,6 +107,34 @@ def getConfig(url):
         return toonhunter.CONFIGURATIONS.get(domain)
     elif domain == "dragon-manga.com":
         return dragonmanga.CONFIGURATIONS.get(domain)
+    elif domain == "mangakimi.com":
+        return mangakimi.CONFIGURATIONS.get(domain)
+    elif domain == "mangastep.com":
+        return mangastep.CONFIGURATIONS.get(domain)
+    elif domain == "reapertrans.com":
+        return reapertrans.CONFIGURATIONS.get(domain)
+    elif domain == "tanuki-manga.com":
+        return tanukimanga.CONFIGURATIONS.get(domain)
+    elif domain == "spy-manga.com":
+        return spymanga.CONFIGURATIONS.get(domain)
+    elif domain == "mafia-manga.com":
+        return mafiamanga.CONFIGURATIONS.get(domain)
+    elif domain == "ntr-manga.com":
+        return ntrmanga.CONFIGURATIONS.get(domain)
+    elif domain == "xenon-manga.com":
+        return xenonmanga.CONFIGURATIONS.get(domain)
+    elif domain == "108-manga.com":
+        return manga108.CONFIGURATIONS.get(domain)
+    elif domain == "asurahunter.com":
+        return asurahunter.CONFIGURATIONS.get(domain)
+    elif domain == "flash-manga.com":
+        return flashmanga.CONFIGURATIONS.get(domain)
+    elif domain == "xn--l3c0azab5a2gta.com":
+        return sodsaime.CONFIGURATIONS.get(domain)
+    elif domain == "murim-manga.com":
+        return murimmanga.CONFIGURATIONS.get(domain)
+    elif domain == "moodtoon.com":
+        return moodtoon.CONFIGURATIONS.get(domain)
     else:
         return None
 
@@ -323,6 +366,8 @@ def fetchmanga(url):
         chapterslink = []
         for i, chapter in enumerate(chapterslist):
             url = chapter.find('a')['href']
+            if not url.startswith('https'):
+                break
             try:
                 title = chapter.find('a')['title']
             except:
@@ -510,6 +555,15 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                         currentTime = gettime()
                         main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
 
+        # Check downloaded files
+        downloadedFiles = os.listdir(chapterPath)
+        if len(getimg) != len(downloadedFiles):
+            print(f"Downloaded files: {len(downloadedFiles)}")
+            print(f"Expected files: {len(getimg)}")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: The number of downloaded files {len(downloadedFiles)} from {chapterURL} not equal to expected files {len(getimg)}.\n")
+            return None
+
 def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, logfile):
     image_list = []
     if readjson is True:
@@ -525,8 +579,8 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
                 if 'sources' in json_data and len(json_data['sources']) > 0:
                     image_list = json_data['sources'][0].get('images', [])
         except:
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to find image urls from {chapterURL}.\n")
+            currenttime = gettime()
+            main.write_file(logfile, f"{currenttime}: Failed to find image urls from {chapterURL}.\n")
             return None
         
         return image_list
@@ -540,14 +594,15 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
             imgdiv = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
             )
-
+            ranmouse(driver)
+            time.sleep(1)
             rmElements(driver, readdiv)
             captureimg(driver, readdiv, chapter, chapterPath)
 
         except Exception as e:
             print(f"Error: {e}")
-            time = gettime()
-            main.write_file(logfile, f"{time}: Failed to capture webpage from {chapterURL}.\n")
+            currenttime = gettime()
+            main.write_file(logfile, f"{currenttime}: Failed to capture webpage from {chapterURL}.\n")
             return None
         
         driver.quit()
@@ -696,3 +751,20 @@ def captureimg(driver, readdiv, chapter, chapterPath):
         image_path = os.path.join(chapterPath, f"Chapter-{chapter}_image_{i}.png")
         driver.save_screenshot(image_path)
         print(f"Saved to {image_path} successfully")
+
+def ranmouse(driver):
+    # Get the browser window size
+    window_size = driver.get_window_size()
+    max_x = window_size['width']
+    max_y = window_size['height']
+
+    # Generate random coordinates
+    x = random.randint(0, max_x)
+    y = random.randint(0, max_y)
+
+    # Create an ActionChains object
+    actions = ActionChains(driver)
+
+    # Move the mouse to the random coordinates
+    actions.move_by_offset(x, y).perform()
+    time.sleep(0.5)

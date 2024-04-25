@@ -23,7 +23,12 @@ from include.madara.general import chocomanga
 from include.madara.general import moritoon
 from include.madara.general import mangalc
 from include.madara.general import manhuathai
-
+from include.madara.general import manhuabug
+from include.madara.general import sixmanga
+from include.madara.general import nabeemanga
+from include.madara.general import kumotran
+from include.madara.general import manhuakey
+from include.madara.general import doodmanga
 
 # Adult
 
@@ -88,6 +93,18 @@ def getConfig(url):
         return mangalc.CONFIGURATIONS.get(domain)
     elif domain == "manhuathai.com":
         return manhuathai.CONFIGURATIONS.get(domain)
+    elif domain == "manhuabug.com":
+        return manhuabug.CONFIGURATIONS.get(domain)
+    elif domain == "sixmanga.com":
+        return sixmanga.CONFIGURATIONS.get(domain)
+    elif domain == "nabee-manga.com":
+        return nabeemanga.CONFIGURATIONS.get(domain)
+    elif domain == "kumotran.com":
+        return kumotran.CONFIGURATIONS.get(domain)
+    elif domain == "manhuakey.com":
+        return manhuakey.CONFIGURATIONS.get(domain)
+    elif domain == "doodmanga.com":
+        return doodmanga.CONFIGURATIONS.get(domain)
     else:
         return None
 
