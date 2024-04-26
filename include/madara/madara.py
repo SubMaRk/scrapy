@@ -134,10 +134,9 @@ def findCover(section, div):
         print(f"Error finding status {div}: {e}")
         return None
 
-def fetchmanga(url):
+def fetchmanga(url, start, end, output, threads, delay, listchapter):
     global readdiv, readjson, readencrypt
-    current = os.getcwd()
-    output = os.path.join(current, "Download")
+    output = os.path.join(output, "Download")
     logfile = os.path.join(output, "error.log")
     main.mkdir(output)
 
@@ -258,8 +257,6 @@ def fetchmanga(url):
         print(f"Error finding status from {getstatus}: {e}")
         chapterslist = ''
 
-    start = end = None
-    showchapters = False
     if chapterslist:
         data_num = ''
         first_chapter = chapterslist[0]
@@ -326,16 +323,21 @@ def fetchmanga(url):
                 title = title if title else None
 
             parseurl = urllib.parse.unquote(url)
-            if showchapters is True:
+            if listchapter is True:
                 print(f"{i+1} | {title} : {parseurl}")
             else:
                 pass
             chapterslink.append(parseurl)
+        else:
+            if listchapter is True:
+                return None
+            else:
+                pass
         
         aftercount = len(chapterslink)
     else:
-        time = gettime()
-        main.write_file(logfile, f"{time}: Failed to find chapter table from {url}\n")
+        currenttime = gettime()
+        main.write_file(logfile, f"{currenttime}: Failed to find chapter table from {url}\n")
         return None
     print(f"Chapters: {aftercount}")
 
@@ -399,7 +401,6 @@ def fetchmanga(url):
         'picz.in.th'
     ]
 
-    threads = 1
     # Start process chapters with multi-threaded
     workers = threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
@@ -409,7 +410,7 @@ def fetchmanga(url):
         for i, chapter_url in enumerate(chapterslink):
             print(f"Start processing {chapter_url}...")
 
-            future = executor.submit(preparedl, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, logfile)
+            future = executor.submit(preparedl, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, delay, logfile)
             futures.append(future)
         
         for future in concurrent.futures.as_completed(futures):
@@ -424,7 +425,7 @@ def fetchmanga(url):
             except Exception as e:
                 print(f"Error: {e}")
 
-def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, logfile):
+def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, delay, logfile):
     soup = bssoup(chapterURL)
 
     # Fiind chapter title
@@ -449,7 +450,7 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     chapterPath = os.path.join(folderName, chapterFoldername)
     main.mkdir(chapterPath)
     
-    getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, logfile)
+    getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile)
     if getimg is True:
         print("Capture image from page successfully.")
     else:
@@ -502,7 +503,7 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                         currentTime = gettime()
                         main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
 
-def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, logfile):
+def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile):
     image_list = []
     if readjson is True:
         print()
@@ -519,6 +520,7 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
 
             rmElements(driver, readdiv)
             dc_windowsize(driver)
+            time.sleep(delay)
             captureimg(driver, readdiv, chapter, chapterPath)
 
         except Exception as e:
