@@ -5,88 +5,80 @@ Download any Manga Manhwa Manhua from online website with Custom Extension.
 
 **MangaReader Template Sites**
 
-| **Type**  | **Domain**              | **Status** |
-|-----------|-------------------------|------------|
-|  General  | thaimanga.net           | [✅] |
-|  General  | manga689.com            | [✅] |
-|  General  | manga168.com            | [✅] |
-|  General  | tamamanga.com           | [✅] |
-|  General  | xn--l3c0azab5a2gta.com | [✅] |
-|  General  | ped-manga.com           | [🔴] |
-|  General  | sing-manga.com          | [✅] |
-|  General  | mangakimi.com           | [✅] |
-|  General  | me-manga.com            | [🔴] |
-|  General  | reapertrans.com         | [✅] |
-|  General  | dragon-manga.com        | [✅] |
-|  General  | moodtoon.com            | [✅] |
-|  General  | toomtam-manga.com       | [🔴] |
-|  General  | miku-manga.com          | [🔴] |
-|  General  | asurahunter.com         | [✅] |
-|  General  | 108-manga.com           | [✅] |
-|  General  | joji-manga.com          | [🔴] |
-|  General  | spy-manga.com           | [✅] |
-|  General  | murim-manga.com         | [✅] |
-|  General  | kumomanga.com           | [🔴] |
-|  General  | mangastep.com           | [✅] |
-|  General  | jaymanga.com            | [🔴] |
-|  General  | hippomanga.com          | [🔴] |
-|  General  | popsmanga.com           | [🔴] |
-|  General  | tanuki-manga.com        | [✅] |
-|  General  | inu-manga.com           | [🔴] |
-|  General  | lami-manga.com          | [🔴] |
-|  General  | weimanga.com            | [🔴] |
-|  General  | slow-manga.com          | [🔴] |
-|  General  | makimaaaaa.com          | [🔴] |
-|  General  | kazetori-manga.com      | [🔴] |
-|  General  | kumomanga.net           | [🔴] |
-|  General  | flash-manga.com         | [✅] |
-|  General  | manga-za.net            | [🔴] |
-|  General  | manga-moons.net         | [🔴] |
-|  General  | oremanga.net            | [✅] |
-|  General  | manhwathailand.com      | [🔴] |
-|  General  | romance-manga.com       | [🔴] |
-|  General  | germa-66.com            | [🔴] |
-|  General  | Sloiiz-manga            | [🔴] |
-|  General  | xn--72ca2cvbi6fe9m.com | [🔴] |
-|  General  | go-manga.com            | [🔴] |
-|  General  | up-manga.com            | [🔴] |
-|  General  | god-manga.com           | [🔴] |
-|  General  | rose-manga.com          | [🔴] |
-|  General  | xn--72cas2cj6a4hf4b5a8oc.com | [🔴] |
-|  General  | seetoon.net             | [🔴] |
-|  General  | skoiiz-manga.com        | [🔴] |
-|  General  | manga-sugoi.com         | [🔴] |
-|  General  | manga-i.com             | [🔴] |
-|  General  | ranker-manga.com        | [🔴] |
-|  General  | manga248.com            | [🔴] |
-|  General  | haremmanga.net          | [🔴] |
-|  General  | webtoonmanga.com        | [🔴] |
-|  General  | manhwathaiplus.net      | [🔴] |
-|  General  | funtoons.online         | [🔴] |
-|  General  | mafia-manga.com         | [✅] |
-|  General  | xenon-manga.com         | [✅] |
-|  General  | thetoon101.com          | [🔴] |
-|   Adult   | god-doujin.com          | [🔴] |
-|   Adult   | doujin69.com            | [🔴] |
-|   Adult   | doujin-new.com          | [🔴] |
-|   Adult   | oredoujin.com           | [🔴] |
-|   Adult   | doujin-y.com            | [🔴] |
-|   Adult   | toonhunter.com          | [✅] |
-|   Adult   | doujinmoon.com          | [🔴] |
-|   Adult   | ecchi-doujin.com        | [🔴] |
-|   Adult   | doujin4u.com            | [🔴] |
-|   Adult   | xn--69-uqi5m9an.com     | [🔴] |
-|   Adult   | 108read.com             | [🔴] |
-|   Adult   | ped-doujin.com          | [🔴] |
-|   Adult   | eye-manga.com           | [🔴] |
-|   Adult   | manga-20.com            | [🔴] |
-|   Adult   | manga-yuri.com          | [🔴] |
-|   Adult   | tora-manga.com          | [🔴] |
-|   Adult   | manga-bl.com            | [🔴] |
-|   Adult   | manga-yaoi.com          | [🔴] |
-|   Adult   | xn--72ca0fgy7cem.com   | [🔴] |
-|   Adult   | ntr-manga.com           | [✅] |
-|   Adult   | 18ntr.com               | [🔴] |
+| **No.** | **Type**  | **Domain**              |          **Name**          | **LANGUAGE** | **Status** |
+|---------|-----------|-------------------------|----------------------------|--------------|------------|
+|   001   |  General  | thaimanga.net           | ThaiManga                  |     Thai     |    [✅]    |
+|   002   |  General  | manga689.com            | Manga689                   |     Thai     |    [✅]    |
+|   003   |  General  | manga168.com            | Manga168                   |     Thai     |    [✅]    |
+|   004   |  General  | tamamanga.com           | TAMAMANGA                  |     Thai     |    [✅]    |
+|   005   |  General  | xn--l3c0azab5a2gta.com  | สดใสเมะ                    |     Thai     |    [✅]    |
+|   006   |  General  | ped-manga.com           | Ped-Manga                  |     Thai     |    [✅]    |
+|   007   |  General  | sing-manga.com          | SING-MANGA                 |     Thai     |    [✅]    |
+|   008   |  General  | mangakimi.com           | MangaKimi                  |     Thai     |    [✅]    |
+|   009   |  General  | reapertrans.com         | Reapertrans                |     Thai     |    [✅]    |
+|   010   |  General  | dragon-manga.com        | Dragon-Manga               |     Thai     |    [✅]    |
+|   011   |  General  | moodtoon.com            | moodtoon                   |     Thai     |    [✅]    |
+|   012   |  General  | toomtam-manga.com       | Toomtam-Manga              |     Thai     |    [✅]    |
+|   013   |  General  | miku-manga.com          | Miku-manga                 |     Thai     |    [✅]    |
+|   014   |  General  | asurahunter.com         | Asurahunter                |     Thai     |    [✅]    |
+|   015   |  General  | 108-manga.com           | 108-Manga                  |     Thai     |    [✅]    |
+|   016   |  General  | joji-manga.com          | Joji-Manga                 |     Thai     |    [✅]    |
+|   017   |  General  | spy-manga.com           | Spy-Manga                  |     Thai     |    [✅]    |
+|   018   |  General  | murim-manga.com         | Murim-Manga                |     Thai     |    [✅]    |
+|   019   |  General  | kumomanga.net           | kumomanga                  |     Thai     |    [✅]    |
+|   020   |  General  | mangastep.com           | MANGASTEP                  |     Thai     |    [✅]    |
+|   021   |  General  | hippomanga.com          | Hippomanga                 |     Thai     |    [✅]    |
+|   022   |  General  | popsmanga.com           | PopsManga                  |     Thai     |    [✅]    |
+|   023   |  General  | tanuki-manga.com        | Tanuki-Manga               |     Thai     |    [✅]    |
+|   024   |  General  | inu-manga.com           | Inu Manga                  |     Thai     |    [✅]    |
+|   025   |  General  | lami-manga.com          | Lami-Manga                 |     Thai     |    [✅]    |
+|   026   |  General  | weimanga.com            | Weimanga                   |     Thai     |    [✅]    |
+|   027   |  General  | slow-manga.com          | SLOW-MANGA                 |     Thai     |    [✅]    |
+|   028   |  General  | makimaaaaa.com          | makimaaaaa                 |     Thai     |    [✅]    |
+|   029   |  General  | kazetori-manga.com      | Kazetori Manga             |     Thai     |    [✅]    |
+|   030   |  General  | flash-manga.com         | Flash-Manga                |     Thai     |    [✅]    |
+|   031   |  General  | manga-za.net            | MANGA-ZA                   |     Thai     |    [✅]    |
+|   032   |  General  | oremanga.net            | Oremanga                   |     Thai     |    [✅]    |
+|   033   |  General  | manhwathailand.com      | Manhwa Thailand            |     Thai     |    [✅]    |
+|   034   |  General  | romance-manga.com       | Romance-manga              |     Thai     |    [✅]    |
+|   035   |  General  | germa-66.com            | Germa-66                   |     Thai     |    [✅]    |
+|   036   |  General  | skoiiz-manga.com        | SKOIIZ-MANGA               |     Thai     |    [✅]    |
+|   037   |  General  | xn--72ca2cvbi6fe9m.com  | มังงะไทย                    |     Thai     |    [✅]    |
+|   038   |  General  | go-manga.com            | Go-Manga                   |     Thai     |    [✅]    |
+|   039   |  General  | up-manga.com            | Up-Manga                   |     Thai     |    [✅]    |
+|   040   |  General  | god-manga.com           | God-manga                  |     Thai     |    [✅]    |
+|   041   |  General  | rose-manga.com          | Rose-manga                 |     Thai     |    [✅]    |
+|   042   |  General  | xn--72cas2cj6a4hf4b5a8oc.com | มังงะญี่ปุ่น               |     Thai     |    [✅]    |
+|   043   |  General  | seetoon.net             | SEETOON                    |     Thai     |    [✅]    |
+|   044   |  General  | manga-sugoi.com         | Manga sugoi                |     Thai     |    [✅]    |
+|   045   |  General  | manga-i.com             | Manga-i                    |     Thai     |    [✅]    |
+|   046   |  General  | ranker-manga.com        | Ranker-Manga               |     Thai     |    [✅]    |
+|   047   |  General  | manga248.com            | manga248                   |     Thai     |    [✅]    |
+|   048   |  General  | haremmanga.net          | Haremmanga                 |     Thai     |    [✅]    |
+|   049   |  General  | one-manga.com           | ONE-MANGA                  |     Thai     |    [✅]    |
+|   050   |   Adult   | god-doujin.com          | God-Doujin                 |     Thai     |    [🔴]    |
+|   051   |   Adult   | doujin69.com            | Doujin69                   |     Thai     |    [🔴]    |
+|   052   |   Adult   | doujin-new.com          | Doujin-New                 |     Thai     |    [🔴]    |
+|   053   |   Adult   | oredoujin.com           | Oredoujin                  |     Thai     |    [🔴]    |
+|   054   |   Adult   | doujin-y.com            | Doujin-Y                   |     Thai     |    [🔴]    |
+|   055   |   Adult   | toonhunter.com          | Toonhunter                 |     Thai     |    [✅]    |
+|   056   |   Adult   | doujinmoon.com          | Doujinmoon                 |     Thai     |    [🔴]    |
+|   057   |   Adult   | ecchi-doujin.com        | Ecchi-Doujin               |     Thai     |    [🔴]    |
+|   058   |   Adult   | doujin4u.com            | Doujin4u                   |     Thai     |    [🔴]    |
+|   059   |   Adult   | xn--69-uqi5m9an.com     | อิคึ69                       |     Thai     |    [🔴]    |
+|   060   |   Adult   | 108read.com             | 108Read                    |     Thai     |    [🔴]    |
+|   061   |   Adult   | ped-doujin.com          | Ped doujin                 |     Thai     |    [🔴]    |
+|   062   |   Adult   | eye-manga.com           | EYE-Manga                  |     Thai     |    [🔴]    |
+|   063   |   Adult   | manga-20.com            | Manga-20                   |     Thai     |    [🔴]    |
+|   064   |   Adult   | manga-yuri.com          | Manga-Yuri                 |     Thai     |    [🔴]    |
+|   065   |   Adult   | tora-manga.com          | Tora-manga                 |     Thai     |    [🔴]    |
+|   066   |   Adult   | manga-bl.com            | Manga-BL                   |     Thai     |    [🔴]    |
+|   067   |   Adult   | manga-yaoi.com          | Manga-Yaoi                 |     Thai     |    [🔴]    |
+|   068   |   Adult   | xn--72ca0fgy7cem.com    | มังงะวาย.Com                |     Thai     |    [🔴]    |
+|   069   |   Adult   | ntr-manga.com           | NTR-Manga                  |     Thai     |    [✅]    |
+|   070   |   Adult   | 18ntr.com               | 18NTR                      |     Thai     |    [🔴]    |
+
+
 
 **Madara Template Sites**
 
