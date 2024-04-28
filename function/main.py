@@ -5,6 +5,7 @@ import time
 import os
 import re
 import urllib.parse
+from tqdm import tqdm
 
 def get_user_agent():
     # Get all the latest user agents
@@ -63,6 +64,12 @@ def write_file(filename, content):
 def read_file(filepath):
     with open(filepath, "r", encoding='utf8') as file:
         return file.readlines()
+    
+def countFiles(path):
+    files = os.listdir(path)
+    file_count = len(files)
+
+    return file_count
 
 def manga_id(manga_url):
     decode_url = urllib.parse.urlparse(manga_url)
@@ -73,7 +80,7 @@ def manga_id(manga_url):
 def dl_img(url, path, title, logfile):
     get_datetime = time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
     max_retries = 3  # Maximum number of download retries
-    timeout = 30  # Set a timeout for the download
+    timeout = 60  # Set a timeout for the download
     headers = getHeaders()
 
     for i in range(max_retries):
@@ -86,11 +93,20 @@ def dl_img(url, path, title, logfile):
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
             # Write the received content in chunks to the specified file path
-            with open(path, 'wb') as file:
+            total_size = int(response.headers.get('content-length', 0))  # Total size of the file
+            with open(path, 'wb') as file, tqdm(
+                desc=title,
+                total=total_size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024,
+                disable=not total_size,
+            ) as bar:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         file.write(chunk)
                         file.flush()
+                        bar.update(len(chunk))  # Update progress bar
         except rq.exceptions.RequestException as e:
             if i == max_retries - 1:  # If it's the final retry attempt and failed
                 print(f"Error {e} occurred while downloading {url}.")
