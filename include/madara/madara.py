@@ -345,6 +345,12 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
     try:
         cover = section.select_one(getcover)
         mgCover = cover['data-src'] if 'data-src' in cover.attrs else cover['src'] if 'src' in cover.attrs else None
+        if mgCover:
+            if not mgCover.startswith('https:') and mgCover.startswith('//'):
+                mgCover = 'https:' + mgCover
+            cleanup = mgCover.rfind('?')
+            if cleanup != -1:
+                mgCover = mgCover[:cleanup]
     except Exception as e:
         print(f"Error finding cover from {getcover}: {e}")
         mgCover = ''
@@ -453,8 +459,17 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile)
     if getimg is True:
         print("Capture image from page successfully.")
+    elif getimg is None:
+        return None
     else:
+        count = main.countFiles(chapterPath)
+        if count == len(getimg):
+            return None
+        
         for i, img in enumerate(getimg):
+            if not img.startswith('https:') and img.startswith('//'):
+                img = 'https:' + img
+                
             # Remove invalid characters from link;
             if "%0A" in img:
                 img = img.replace('%0A', '')
@@ -502,12 +517,24 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                     if compare_result is False:
                         currentTime = gettime()
                         main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
+        # Check downloaded files
+        downloadedFiles = main.countFiles(chapterPath)
+        if len(getimg) != downloadedFiles:
+            print(f"Downloaded files: {downloadedFiles}")
+            print(f"Expected files: {len(getimg)}")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: The number of downloaded files {downloadedFiles} from {chapterURL} not equal to expected files {len(getimg)}.\n")
+            return None
 
 def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile):
     image_list = []
     if readjson is True:
         print()
     elif readencrypt is True:
+        count = main.countFiles(chapterPath)
+        if count > 0:
+            return None
+        
         options = Options()
         driver = webdriver.Chrome(options=options)
         driver.get(chapterURL)
