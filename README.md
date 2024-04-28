@@ -1,6 +1,56 @@
 # scrapy
 Download any Manga Manhwa Manhua from online website with Custom Extension.
 
+# Installation
+
+To install the required dependencies for this project, follow these steps:
+
+1. **Clone the Repository:**
+
+```bash
+git clone https://github.com/SubMaRk/scrapy.git
+cd scrapy
+```
+2. **Install Dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+3. **Enjoy!**
+
+
+# Usage
+
+```bash
+python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--output OUTPUT] [--threads THREADS] [--delay DELAY] [--list]
+```
+
+**Arguments**
+
+- `--help`, `-h`: display this help.
+- `--murl`, `-m MURL`: Enter Manga URL to process.
+- `--start`, `-s START`: Specify chapter number to start download. (default: 0)
+- `--end`, `-e END`: Specify chapter number to stop download.
+- `--output`, `-o OUTPUT`: Enter output path to save downloaded.
+- `--threads`, `-t THREADS`: Enter amount of threads to run.
+- `--delay`, `-d DELAY`: Enter time to delay read page until loaded (In seconds; Use for images encrypted in readpage).
+- `--list`, `-l`: Display Chapter list only.
+
+# Example
+
+Download chapters 1 to 10 of a manga from a given URL with 4 threads:
+
+```bash
+python scrapy.py -m <manga_url> -s 1 -e 10 -o <output_folder> -t 4
+```
+
+Display the chapter list from the specified manga URL only:
+
+```bash
+python scrapy.py -m <manga_url> -l
+```
+
 # Support Website
 
 **MangaReader Template Sites**
