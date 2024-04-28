@@ -38,6 +38,39 @@ from include.mangareader.general import flashmanga
 from include.mangareader.general import sodsaime
 from include.mangareader.general import murimmanga
 from include.mangareader.general import moodtoon
+from include.mangareader.general import pedmanga
+from include.mangareader.general import toomtammanga
+from include.mangareader.general import mikumanga
+from include.mangareader.general import jojimanga
+from include.mangareader.general import kumomanga
+from include.mangareader.general import hippomanga
+from include.mangareader.general import inumanga
+from include.mangareader.general import makimaaaaa
+from include.mangareader.general import slowmanga
+from include.mangareader.general import mangawei
+from include.mangareader.general import kazetorimanga
+from include.mangareader.general import godmanga
+from include.mangareader.general import upmanga
+from include.mangareader.general import gomanga
+from include.mangareader.general import mangathai
+from include.mangareader.general import skoiizmanga
+from include.mangareader.general import germa66
+from include.mangareader.general import romancemanga
+from include.mangareader.general import manhwathailand
+from include.mangareader.general import mangaza
+from include.mangareader.general import rosemanga
+from include.mangareader.general import mangayipun
+from include.mangareader.general import seetoon
+from include.mangareader.general import mangasugoi
+from include.mangareader.general import mangai
+from include.mangareader.general import rankermanga
+from include.mangareader.general import manga248
+from include.mangareader.general import manhwathaiplus
+from include.mangareader.general import thetoon101
+from include.mangareader.general import onemanga
+from include.mangareader.general import popmanga
+from include.mangareader.general import mangalami
+from include.mangareader.general import haremmanga
 
 # Adult
 from include.mangareader.adult import toonhunter
@@ -135,6 +168,72 @@ def getConfig(url):
         return murimmanga.CONFIGURATIONS.get(domain)
     elif domain == "moodtoon.com":
         return moodtoon.CONFIGURATIONS.get(domain)
+    elif domain == "ped-manga.com":
+        return pedmanga.CONFIGURATIONS.get(domain)
+    elif domain == "toomtam-manga.com":
+        return toomtammanga.CONFIGURATIONS.get(domain)
+    elif domain == "miku-manga.com":
+        return mikumanga.CONFIGURATIONS.get(domain)
+    elif domain == "joji-manga.com":
+        return jojimanga.CONFIGURATIONS.get(domain)
+    elif domain == "kumomanga.net":
+        return kumomanga.CONFIGURATIONS.get(domain)
+    elif domain == "hippomanga.com":
+        return hippomanga.CONFIGURATIONS.get(domain)
+    elif domain == "inu-manga.com":
+        return inumanga.CONFIGURATIONS.get(domain)
+    elif domain == "makimaaaaa.com":
+        return makimaaaaa.CONFIGURATIONS.get(domain)
+    elif domain == "slow-manga.com":
+        return slowmanga.CONFIGURATIONS.get(domain)
+    elif domain == "mangawei.com":
+        return mangawei.CONFIGURATIONS.get(domain)
+    elif domain == "kazetori-manga.com":
+        return kazetorimanga.CONFIGURATIONS.get(domain)
+    elif domain == "god-manga.com":
+        return godmanga.CONFIGURATIONS.get(domain)
+    elif domain == "up-manga.com":
+        return upmanga.CONFIGURATIONS.get(domain)
+    elif domain == "go-manga.com":
+        return gomanga.CONFIGURATIONS.get(domain)
+    elif domain == "xn--72ca2cvbi6fe9m.com":
+        return mangathai.CONFIGURATIONS.get(domain)
+    elif domain == "skoiiz-manga.com":
+        return skoiizmanga.CONFIGURATIONS.get(domain)
+    elif domain == "germa-66.com":
+        return germa66.CONFIGURATIONS.get(domain)
+    elif domain == "romance-manga.com":
+        return romancemanga.CONFIGURATIONS.get(domain)
+    elif domain == "manhwa-thailand.com":
+        return manhwathailand.CONFIGURATIONS.get(domain)
+    elif domain == "manhwathaiplus.net":
+        return manhwathaiplus.CONFIGURATIONS.get(domain)
+    elif domain == "manga-za.net":
+        return mangaza.CONFIGURATIONS.get(domain)
+    elif domain == "rose-manga.com":
+        return rosemanga.CONFIGURATIONS.get(domain)
+    elif domain == "xn--72cas2cj6a4hf4b5a8oc.com":
+        return mangayipun.CONFIGURATIONS.get(domain)
+    elif domain == "seetoon.net":
+        return seetoon.CONFIGURATIONS.get(domain)
+    elif domain == "manga-sugoi.com":
+        return mangasugoi.CONFIGURATIONS.get(domain)
+    elif domain == "manga-i.com":
+        return mangai.CONFIGURATIONS.get(domain)
+    elif domain == "ranker-manga.com":
+        return rankermanga.CONFIGURATIONS.get(domain)
+    elif domain == "manga248.com":
+        return manga248.CONFIGURATIONS.get(domain)
+    elif domain == "thetoon101.com":
+        return thetoon101.CONFIGURATIONS.get(domain)
+    elif domain == "one-manga.com":
+        return onemanga.CONFIGURATIONS.get(domain)
+    elif domain == "popsmanga.com":
+        return popmanga.CONFIGURATIONS.get(domain)
+    elif domain == "mangalami.com":
+        return mangalami.CONFIGURATIONS.get(domain)
+    elif domain == "haremmanga.net":
+        return haremmanga.CONFIGURATIONS.get(domain)
     else:
         return None
 
@@ -396,6 +495,12 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
     try:
         cover = section.select_one(getcover)
         mgCover = mgCover = cover['data-src'] if 'data-src' in cover.attrs else cover['src'] if 'src' in cover.attrs else None
+        if mgCover:
+            if not mgCover.startswith('https:') and mgCover.startswith('//'):
+                mgCover = 'https:' + mgCover
+            cleanup = mgCover.rfind('?')
+            if cleanup != -1:
+                mgCover = mgCover[:cleanup]
     except Exception as e:
         print(f"Error finding cover from {getcover}: {e}")
         mgCover = ''
@@ -504,8 +609,16 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile)
     if getimg is True:
         print("Capture image from page successfully.")
+    elif getimg is None:
+        return None
     else:
+        count = main.countFiles(chapterPath)
+        if count == len(getimg):
+            return None
+        
         for i, img in enumerate(getimg):
+            if not img.startswith('https:') and img.startswith('//'):
+                img = 'https:' + img
             # Remove invalid characters from link;
             if "%0A" in img:
                 img = img.replace('%0A', '')
@@ -555,12 +668,12 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
                         main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
 
         # Check downloaded files
-        downloadedFiles = os.listdir(chapterPath)
-        if len(getimg) != len(downloadedFiles):
-            print(f"Downloaded files: {len(downloadedFiles)}")
+        downloadedFiles = main.countFiles(chapterPath)
+        if len(getimg) != downloadedFiles:
+            print(f"Downloaded files: {downloadedFiles}")
             print(f"Expected files: {len(getimg)}")
             currentTime = gettime()
-            main.write_file(logfile, f"{currentTime}: The number of downloaded files {len(downloadedFiles)} from {chapterURL} not equal to expected files {len(getimg)}.\n")
+            main.write_file(logfile, f"{currentTime}: The number of downloaded files {downloadedFiles} from {chapterURL} not equal to expected files {len(getimg)}.\n")
             return None
 
 def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile):
@@ -584,6 +697,10 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
         
         return image_list
     elif readencrypt is True:
+        count = main.countFiles(chapterPath)
+        if count > 0:
+            return None
+        
         options = Options()
         driver = webdriver.Chrome(options=options)
         driver.get(chapterURL)
