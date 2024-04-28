@@ -12,7 +12,7 @@ CONFIGURATIONS = {
         "getchaptertitle": "h1.entry-title",
         "readdiv": "div#readerarea",
         "delaylist": False,
-        "readjson": True,
-        "readencrypt": False
+        "readjson": False,
+        "readencrypt": True
     }
 }
