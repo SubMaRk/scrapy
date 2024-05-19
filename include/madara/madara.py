@@ -29,6 +29,7 @@ from include.madara.general import nabeemanga
 from include.madara.general import kumotran
 from include.madara.general import manhuakey
 from include.madara.general import doodmanga
+from include.madara.general import haremmanhua
 
 # Adult
 
@@ -45,35 +46,52 @@ def get_user_agent():
 def getHeaders():
     user_agent = get_user_agent()
     headers = {
-        'User-Agent': user_agent
+        'User-Agent': user_agent,
+        'Accept-Language': 'th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
     }
 
     return headers
 
 def bssoup(url):
-    # Set headers
-    headers = getHeaders()
-    max_retires = 6
-    delay = 15
-    for retry in range(max_retires):
-        try:
-            response = rq.get(url, headers=headers)
-            response.raise_for_status()
-        except rq.exceptions.RequestException as e:
-            # Handle request-related errors
-            print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
-            time.sleep(delay)
-        except rq.exceptions.HTTPError as e:
-            # Handle request-related errors
-            print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
-            time.sleep(delay)
-        except Exception as e:
-            # Handle other unexpected exceptions
-            print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
-            time.sleep(delay)
-        else:
-            soup = bs(response.content, "html.parser")
-            break
+    # Bypass for some website
+    parseURL = urlparse(url)
+    domain = parseURL.netloc.replace('www.', '')
+    bypassdomains = ['manga-lc.net', 'haremmanhua.com']
+    if domain in bypassdomains:
+        options = Options()
+        driver = webdriver.Chrome(options=options)
+        driver.get(url)
+        # Wait until the document.readyState is 'complete'
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//body/*')))
+        soup = bs(driver.page_source, "html.parser")
+    else:
+        # Set headers
+        headers = getHeaders()
+        max_retires = 3
+        delay = 15
+        soup = ''
+        with rq.Session() as session:
+            session.headers.update(headers)
+            for retry in range(max_retires):
+                try:
+                    response = rq.get(url, headers=headers)
+                    response.raise_for_status()
+                except rq.exceptions.RequestException as e:
+                    # Handle all request-related errors
+                    print(f"Retry {retry + 1}: Failed to fetch the page. Error: {e}")
+                    time.sleep(delay)
+                except Exception as e:
+                    # Handle other unexpected exceptions
+                    print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
+                    time.sleep(delay)
+                else:
+                    soup = bs(response.content, "html.parser")
+                break
+
     return soup
 
 def gettime():
@@ -105,6 +123,8 @@ def getConfig(url):
         return manhuakey.CONFIGURATIONS.get(domain)
     elif domain == "doodmanga.com":
         return doodmanga.CONFIGURATIONS.get(domain)
+    elif domain == "haremmanhua.com":
+        return haremmanhua.CONFIGURATIONS.get(domain)
     else:
         return None
 
@@ -134,7 +154,7 @@ def findCover(section, div):
         print(f"Error finding status {div}: {e}")
         return None
 
-def fetchmanga(url, start, end, output, threads, delay, listchapter):
+def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchapter, debug):
     global readdiv, readjson, readencrypt
     output = os.path.join(output, "Download")
     logfile = os.path.join(output, "error.log")
@@ -144,6 +164,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
     print(f"Getting configuration for {url}...")
     config = getConfig(url)
     if config is None:
+        if debug is True:
+            print("Error! Missing the configuration file to process this URL.")
         return None
     else:
         print(f"Found configuration: ")
@@ -173,6 +195,9 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         print(f"Delay List: {delaylist}")
         print(f"Read JSON: {readjson}")
         print(f"Read Encrypt: {readencrypt}")
+        if debug is True:
+            print("\nVerify to ensure that the configuration file is correct.")
+            main.waitforact()
 
     # Find Section
     print(f"Fetching manga information...")
@@ -202,6 +227,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         main.write_file(logfile, f"{time}: Failed to find manga title from {url}\n")
         return None
     print(f"Title: {mgTitle}")
+    if debug is True:
+        main.waitforact()
 
     # All info
     infomanga = section.find_all('div', class_='post-content_item')
@@ -217,6 +244,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         except Exception as e:
             mgtype = ''
     print(f"Type: {mgtype}")
+    if debug is True:
+        main.waitforact()
 
     for info in infomanga:
         # Genres
@@ -233,6 +262,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         except Exception as e:
             mggenres = ''
     print(f"Genres: {mggenres}")
+    if debug is True:
+        main.waitforact()
     
     # Status
     mgstatus = None
@@ -247,6 +278,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         except Exception as e:
             mgstatus = ''
     print(f"Status: {mgstatus}")
+    if debug is True:
+        main.waitforact()
 
     # Chapters
     try:
@@ -260,6 +293,11 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
     if chapterslist:
         data_num = ''
         first_chapter = chapterslist[0]
+        first_chapterURL = first_chapter.find('a')['href']
+        if first_chapterURL:
+            if not first_chapterURL.startswith('https'):
+                first_chapter = chapterslist[1]
+
         data_num = main.extract_num(first_chapter, mgTitle, url)
 
         if data_num > 1 and beforecount > 1:
@@ -302,18 +340,12 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         else:
             chapterslist = chapterslist
 
-        first_chapter = chapterslist[0]
-        last_chapter = chapterslist[-1]
-        getfirstlink = first_chapter.find('a')['href']
-        getlastlink = last_chapter.find('a')['href']
-        first_chapter_url = urllib.parse.unquote(getfirstlink)
-        last_chapter_url = urllib.parse.unquote(getlastlink)
-
         # Store the chapters url list;
         chapterslink = []
         for i, chapter in enumerate(chapterslist):
-            url = chapter.find('a')['href']
-            if not url.startswith('https'):
+            chapterURL = chapter.find('a')['href']
+            print(chapterURL)
+            if not chapterURL.startswith('https'):
                 break
 
             try:
@@ -322,7 +354,7 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
                 title = chapter.find('a').text.strip()
                 title = title if title else None
 
-            parseurl = urllib.parse.unquote(url)
+            parseurl = urllib.parse.unquote(chapterURL)
             if listchapter is True:
                 print(f"{i+1} | {title} : {parseurl}")
             else:
@@ -355,8 +387,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         print(f"Error finding cover from {getcover}: {e}")
         mgCover = ''
     print(f"Cover: {mgCover}")
-    
-
+    if debug is True:
+        main.waitforact()
     
     folderName = os.path.join(output, mgTitle)
     main.mkdir(folderName)
@@ -385,7 +417,8 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
                 if compare_result is False:
                     currentTime = gettime()
                     main.write_file(logfile, f"{currentTime}: The size of image {mgCover} from {url} not compared.\n")
-
+    if debug is True:
+        main.waitforact()
 
     skipdomains = ['googleusercontent.com',
         'https://img.toon88.com',
@@ -408,7 +441,7 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
     ]
 
     # Start process chapters with multi-threaded
-    workers = threads
+    workers = worktheads
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
         futures = []
 
@@ -416,7 +449,7 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
         for i, chapter_url in enumerate(chapterslink):
             print(f"Start processing {chapter_url}...")
 
-            future = executor.submit(preparedl, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, delay, logfile)
+            future = executor.submit(preparedl, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug)
             futures.append(future)
         
         for future in concurrent.futures.as_completed(futures):
@@ -431,7 +464,7 @@ def fetchmanga(url, start, end, output, threads, delay, listchapter):
             except Exception as e:
                 print(f"Error: {e}")
 
-def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, delay, logfile):
+def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug):
     soup = bssoup(chapterURL)
 
     # Fiind chapter title
@@ -454,9 +487,12 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
         
     chapterFoldername = f"Chapter-{chapter}"
     chapterPath = os.path.join(folderName, chapterFoldername)
-    main.mkdir(chapterPath)
+    if not os.path.exists(chapterPath):
+        main.mkdir(chapterPath)
+    else:
+        pass
     
-    getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile)
+    getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, wait, logfile, debug)
     if getimg is True:
         print("Capture image from page successfully.")
     elif getimg is None:
@@ -466,57 +502,28 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
         if count == len(getimg):
             return None
         
-        for i, img in enumerate(getimg):
-            if not img.startswith('https:') and img.startswith('//'):
-                img = 'https:' + img
-                
-            # Remove invalid characters from link;
-            if "%0A" in img:
-                img = img.replace('%0A', '')
+        workers = imagethreads
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = []
 
-            # Check extension;
-            file_extension = os.path.splitext(img)[1]
-            if file_extension == ".webppng":
-                img = img.replace(".webppng", ".webp")
+            # Start fetching images from the chapter list;
+            for i, img in enumerate(getimg):
+                print(f"Start Downloading {img}...")
 
-            if not file_extension:
-                print(f"Image link {img} has no extension. Skipping...")
-                currentTime = gettime()
-                main.write_file(logfile, f"{currentTime}: The image not have extenstion from {chapterURL}\n")
-                return None
-
-            if any(skip_domain in img for skip_domain in skipdomains):
-                print(f"Image link {img} has skip domain. Skipping...")
-                currentTime = gettime()
-                main.write_file(logfile, f"{currentTime}: The image found in skip domain from {chapterURL}\n")
-                return None
+                future = executor.submit(downloadImg, i, img, url, chapterURL, chapter, chapterPath, skipdomains, logfile)
+                futures.append(future)
             
-            # Set image and link file name.
-            image_name = f"Chapter-{chapter}_image_{i}{file_extension}"
-            image_path = os.path.join(chapterPath, image_name)
+            for future in concurrent.futures.as_completed(futures):
+                try:
+                    # Get the result of the completed future (if any)
+                    result = future.result()
+                    if result is not None:
+                        print(f"Download image successfully.")
+                    else:
+                        print(f"Failed to download image.")
 
-            os.makedirs(chapterPath, exist_ok=True)
-
-            # Start download image;
-            if os.path.exists(image_path):
-                print(f"Image {image_name} already exists. Trying to check file integrity...")
-                compare_result = main.compare_size(img, image_path, image_name, logfile)
-                if compare_result is False:
-                    currentTime = gettime()
-                    main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
-            else:
-                dl_result = main.dl_img(img, image_path, image_name, logfile)
-                if dl_result is False:
-                    print(f"Error to downloading {url}.")
-                    currentTime = gettime()
-                    main.write_file(logfile, f"{currentTime}: Failed to download the image {img} from {chapterURL}.\n")
-                    return None
-                else:
-                    print(f'{img} => {image_name}')
-                    compare_result = main.compare_size(img, image_path, image_name, logfile)
-                    if compare_result is False:
-                        currentTime = gettime()
-                        main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
+                except Exception as e:
+                    print(f"Error: {e}")
         # Check downloaded files
         downloadedFiles = main.countFiles(chapterPath)
         if len(getimg) != downloadedFiles:
@@ -526,7 +533,58 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
             main.write_file(logfile, f"{currentTime}: The number of downloaded files {downloadedFiles} from {chapterURL} not equal to expected files {len(getimg)}.\n")
             return None
 
-def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, delay, logfile):
+def downloadImg(i, img, url, chapterURL, chapter, chapterPath, skipdomains, logfile):
+    if not img.startswith('https:') and img.startswith('//'):
+        img = 'https:' + img
+    # Remove invalid characters from link;
+    if "%0A" in img:
+        img = img.replace('%0A', '')
+
+    # Check extension;
+    file_extension = os.path.splitext(img)[1]
+    if file_extension == ".webppng":
+        img = img.replace(".webppng", ".webp")
+
+    if not file_extension:
+        print(f"Image link {img} has no extension. Skipping...")
+        currentTime = gettime()
+        main.write_file(logfile, f"{currentTime}: The image not have extenstion from {chapterURL}\n")
+        return None
+            
+    if any(skip_domain in img for skip_domain in skipdomains):
+        print(f"Image link {img} has skip domain. Skipping...")
+        currentTime = gettime()
+        main.write_file(logfile, f"{currentTime}: The image found in skip domain from {chapterURL}\n")
+        return None
+            
+    # Set image and link file name.
+    image_name = f"Chapter-{chapter}_image_{i}{file_extension}"
+    image_path = os.path.join(chapterPath, image_name)
+
+    os.makedirs(chapterPath, exist_ok=True)
+
+    # Start download image;
+    if os.path.exists(image_path):
+        print(f"Image {image_name} already exists. Trying to check file integrity...")
+        compare_result = main.compare_size(img, image_path, image_name, logfile)
+        if compare_result is False:
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
+    else:
+        dl_result = main.dl_img(img, image_path, image_name, logfile)
+        if dl_result is False:
+            print(f"Error to downloading {url}.")
+            currentTime = gettime()
+            main.write_file(logfile, f"{currentTime}: Failed to download the image {img} from {chapterURL}.\n")
+            return None
+        else:
+            print(f'{img} => {image_name}')
+            compare_result = main.compare_size(img, image_path, image_name, logfile)
+            if compare_result is False:
+                currentTime = gettime()
+                main.write_file(logfile, f"{currentTime}: The size of image {img} from {chapterURL} not compared.\n")
+
+def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, wait, logfile, debug):
     image_list = []
     if readjson is True:
         print()
@@ -544,10 +602,15 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
             imgdiv = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
             )
-
+            if debug is True:
+                main.waitforact()
             rmElements(driver, readdiv)
             dc_windowsize(driver)
-            time.sleep(delay)
+            if debug is True:
+                main.waitforact()
+            time.sleep(wait)
+            if debug is True:
+                main.waitforact()
             captureimg(driver, readdiv, chapter, chapterPath)
 
         except Exception as e:
@@ -607,7 +670,9 @@ def rmElements(driver, readdiv):
         targetDiv.style.display = 'block';
         var childNodes = targetDiv.getElementsByTagName('*');
         for (var i = 0; i < childNodes.length; i++) {
-            childNodes[i].style.display = 'block';
+            if (childNodes[i].tagName.toLowerCase() !== 'script') {
+                childNodes[i].style.display = 'block';
+            }
         }
         var parentElements = arguments[1];
         for (var i = 0; i < parentElements.length; i++) {
