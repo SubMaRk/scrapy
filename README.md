@@ -23,7 +23,7 @@ pip install -r requirements.txt
 # Usage
 
 ```bash
-python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--output OUTPUT] [--threads THREADS] [--delay DELAY] [--list]
+python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--output OUTPUT] [--workthreads WORKTHREADS] [--imagethreads IMAGETHREADS] [--wait WAIT] [--list] [--debug]
 ```
 
 **Arguments**
@@ -33,22 +33,36 @@ python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--out
 - `--start`, `-s START`: Specify chapter number to start download. (default: 0)
 - `--end`, `-e END`: Specify chapter number to stop download.
 - `--output`, `-o OUTPUT`: Enter output path to save downloaded.
-- `--threads`, `-t THREADS`: Enter amount of threads to run.
-- `--delay`, `-d DELAY`: Enter time to delay read page until loaded (In seconds; Use for images encrypted in readpage).
+- `--workthreads`, `-t WORKTHREADS`: Enter amount of threads to run.
+- `--imagethreads`, `-t IMAGETHREADS`: Enter amount of threads to download image(s).
+- `--wait`, `-d WAIT`: Enter time to delay read page until loaded (In seconds; Use for images encrypted in readpage).
 - `--list`, `-l`: Display Chapter list only.
+- `--debug`, `-d`: Start with debug mode.
 
 # Example
 
-Download chapters 1 to 10 of a manga from a given URL with 4 threads:
+Download chapters 1 to 10 of a manga from a given URL with 4 work threads and 4 image threads:
 
 ```bash
-python scrapy.py -m <manga_url> -s 1 -e 10 -o <output_folder> -t 4
+python scrapy.py -m <manga_url> -e 10 -o <output_folder> -wt 4 -it 4
 ```
 
 Display the chapter list from the specified manga URL only:
 
 ```bash
 python scrapy.py -m <manga_url> -l
+```
+
+Start with debug mode
+
+```bash
+python scrapy.py -m <manga_url> -d
+```
+
+or
+
+```bash
+python scrapy.py -m <manga_url> -e 10 -o <output_folder> -wt 1 -it 4 -d
 ```
 
 # Support Website
@@ -149,7 +163,7 @@ python scrapy.py -m <manga_url> -l
 |  General  | moritoon.com            | [✅] |
 |  General  | nano-manga.com          | [🔴] |
 |  General  | manga-uptocats.com      | [🔴] |
-|  General  | haremmanhua.com         | [🔴] |
+|  General  | haremmanhua.com         | [✅] |
 |  General  | manghaha.com            | [🔴] |
 |  General  | dokimori.com            | [🔴] |
 |  General  | kuro-manga.com          | [🔴] |
