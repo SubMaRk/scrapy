@@ -16,11 +16,17 @@ def get_user_agent():
 
     return chrome_user_agent
 
+
 def getHeaders():
     user_agent = get_user_agent()
     headers = {
-        'User-Agent': user_agent
+        'User-Agent': user_agent,
+        'Accept-Language': 'th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
     }
+
 
     return headers
 
@@ -28,7 +34,7 @@ def bssoup(url):
     # Set headers
     headers = getHeaders()
     max_retires = 6
-    delay = 15
+    delay = 10
     for retry in range(max_retires):
         try:
             response = rq.get(url, headers=headers)
@@ -256,3 +262,15 @@ def extract_num(first_chapter, title, url):
                 return data_num
         except:
             return None
+        
+def waitforact():
+    print("Press Enter to continue or ESC to exit...")
+    while True:
+        user_input = input()
+        if user_input == '':
+            print("Continuing to the next step...")
+            break
+        elif user_input.lower() == 'esc':
+            print("Exiting...")
+            return False
+    return True
