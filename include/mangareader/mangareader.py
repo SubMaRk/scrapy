@@ -90,7 +90,6 @@ def getHeaders():
     headers = {
         'User-Agent': user_agent,
         'Accept-Language': 'th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1'
     }
