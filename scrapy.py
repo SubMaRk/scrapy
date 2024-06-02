@@ -25,7 +25,9 @@ def arr():
     parser.add_argument('--wait', '-w', dest='wait', metavar='WAIT', type=int, help="Enter time to delay read page until loaded (In second).")
     parser.add_argument('--list', '-l', dest='list', action='store_true', help="Display Chapter list only")
     parser.add_argument('--debug', '-d', dest='debug', action='store_true', help="Enable debug mode for check bug(s) from any process.")
-
+    parser.add_argument('--saveastext', '-sat', dest='saveastext', action='store_true', help="Save information as text.")
+    parser.add_argument('--update', '-u', dest='update', action='store_true', help='Update from save information text files.')
+    parser.add_argument('--verifyimg', '-vi', dest='verifyimg', action='store_true', help='Enable check the images downloaded and save as text files')
     args = parser.parse_args()
 
     if args.murl is not None:
@@ -70,6 +72,21 @@ def arr():
             debug = True
         else:
             debug = False
+
+        if args.saveastext is True:
+            saveastext = True
+        else:
+            saveastext = False
+
+        if args.update is True:
+            update = True
+        else:
+            update = False
+
+        if args.verifyimg is True:
+            verifyimg = True
+        else:
+            verifyimg = False
         
         return manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug
     else:

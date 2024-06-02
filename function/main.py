@@ -22,11 +22,9 @@ def getHeaders():
     headers = {
         'User-Agent': user_agent,
         'Accept-Language': 'th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1'
     }
-
 
     return headers
 
@@ -86,7 +84,7 @@ def manga_id(manga_url):
 def dl_img(url, path, title, logfile):
     get_datetime = time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
     max_retries = 3  # Maximum number of download retries
-    timeout = 60  # Set a timeout for the download
+    timeout = 120  # Set a timeout for the download
     headers = getHeaders()
 
     for i in range(max_retries):

@@ -84,6 +84,7 @@ def checkURL(url):
         'xn--72ca0fgy7cem.com',
         'ntr-manga.com',
         '18ntr.com',
+        'godhman.net'
         ]
     
     madara_site = ['nabee-manga.com',
@@ -130,6 +131,7 @@ def checkURL(url):
     kaichan = 'kaichan.co'
     manga00 = 'manga00.com'
     toonsmanga = 'toonsmanga.com'
+    watashitachimanga = 'watashitachimanga.com'
 
     if domain in mangareader_site:
         return 'mangareader'
@@ -145,5 +147,7 @@ def checkURL(url):
         return 'manga00'
     elif domain == toonsmanga:
         return 'toonsmanga'
+    elif domain == watashitachimanga:
+        return 'watashitachimanga'
     else:
         return False

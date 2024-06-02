@@ -54,43 +54,48 @@ def getHeaders():
 
     return headers
 
-def bssoup(url):
-    # Bypass for some website
-    parseURL = urlparse(url)
-    domain = parseURL.netloc.replace('www.', '')
-    bypassdomains = ['manga-lc.net', 'haremmanhua.com']
-    if domain in bypassdomains:
+def bypasssecurity(url):
+    max_retires = 3
+    delay = 10
+    for retry in range(max_retires):
         options = Options()
         driver = webdriver.Chrome(options=options)
-        driver.get(url)
-        # Wait until the document.readyState is 'complete'
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//body/*')))
-        soup = bs(driver.page_source, "html.parser")
-    else:
-        # Set headers
-        headers = getHeaders()
-        max_retires = 3
-        delay = 15
-        soup = ''
-        with rq.Session() as session:
-            session.headers.update(headers)
-            for retry in range(max_retires):
-                try:
-                    response = rq.get(url, headers=headers)
-                    response.raise_for_status()
-                except rq.exceptions.RequestException as e:
-                    # Handle all request-related errors
-                    print(f"Retry {retry + 1}: Failed to fetch the page. Error: {e}")
-                    time.sleep(delay)
-                except Exception as e:
-                    # Handle other unexpected exceptions
-                    print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
-                    time.sleep(delay)
-                else:
-                    soup = bs(response.content, "html.parser")
-                break
+        try:
+            driver.get(url)
+            # Wait until the document.readyState is 'complete'
+            time.sleep(6)
+            soup = bs(driver.page_source, "html.parser")
+            break
+        except Exception as e:
+            # Handle all request-related errors
+            print(f"Retry {retry + 1}: Failed to fetch the page. Error: {e}")
+            time.sleep(delay)
 
+    return soup
+
+def bssoup(url):
+    # Set headers
+    headers = getHeaders()
+    max_retires = 3
+    delay = 10
+    soup = ''
+    with rq.Session() as session:
+        session.headers.update(headers)
+        for retry in range(max_retires):
+            try:
+                response = rq.get(url, headers=headers)
+                response.raise_for_status()
+            except rq.exceptions.RequestException as e:
+                # Handle all request-related errors
+                print(f"Retry {retry + 1}: Failed to fetch the page. Error: {e}")
+                time.sleep(delay)
+            except Exception as e:
+                # Handle other unexpected exceptions
+                print(f"Retry {retry + 1}: Failed to fetch the page. HTTP status code: {response.status_code}")
+                time.sleep(delay)
+            else:
+                soup = bs(response.content, "html.parser")
+            break
     return soup
 
 def gettime():
@@ -200,7 +205,15 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
 
     # Find Section
     print(f"Fetching manga information...")
-    soup = bssoup(url)
+
+    # Bypass for some website
+    parseURL = urlparse(url)
+    domain = parseURL.netloc.replace('www.', '')
+    bypassdomains = ['manga-lc.net', 'haremmanhua.com']
+    if domain in bypassdomains:
+        soup = bypasssecurity(url)
+    else:
+        soup = bssoup(url)
     mangaID = main.manga_id(url)
     
     try:
@@ -464,7 +477,14 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
                 print(f"Error: {e}")
 
 def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug):
-    soup = bssoup(chapterURL)
+    # Bypass for some website
+    parseURL = urlparse(chapterURL)
+    domain = parseURL.netloc.replace('www.', '')
+    bypassdomains = ['manga-lc.net']
+    if domain in bypassdomains:
+        soup = bypasssecurity(chapterURL)
+    else:
+        soup = bssoup(chapterURL)
 
     # Fiind chapter title
     try:
@@ -590,36 +610,42 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
     elif readencrypt is True:
         count = main.countFiles(chapterPath)
         if count > 0:
+            print("Already processed this chapter.")
             return None
         
-        options = Options()
-        driver = webdriver.Chrome(options=options)
-        driver.get(chapterURL)
+        attempt = 0
+        max_retries = 3
 
-        try:
-            # Wait for the div to be present
-            imgdiv = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
-            )
-            if debug is True:
-                main.waitforact()
-            rmElements(driver, readdiv)
-            dc_windowsize(driver)
-            if debug is True:
-                main.waitforact()
-            time.sleep(wait)
-            if debug is True:
-                main.waitforact()
-            captureimg(driver, readdiv, chapter, chapterPath)
-
-        except Exception as e:
-            print(f"Error: {e}")
-            currentTime = gettime()
-            main.write_file(logfile, f"{currentTime}: Failed to capture webpage from {chapterURL}.\n")
-            return None
-        
-        driver.quit()
-        return True
+        for attempt in range(max_retries):
+            try:
+                options = Options()
+                driver = webdriver.Chrome(options=options)
+                driver.get(chapterURL)
+                # Wait for the div to be present
+                imgdiv = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
+                )
+                time.sleep(wait)
+                if debug is True:
+                    main.waitforact()
+                rmElements(driver, readdiv)
+                dc_windowsize(driver)
+                if debug is True:
+                    main.waitforact()
+                captureimg(driver, readdiv, chapter, chapterPath)
+                driver.quit()
+                
+                if main.countFiles(chapterPath) > 0:
+                    print("Screenshot successfully taken.")
+                    return True
+            except Exception as e:
+                print(f"Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(3)
+                else:
+                    currenttime = gettime()
+                    main.write_file(logfile, f"{currenttime}: Failed to capture webpage from {chapterURL}.\n")
+                    return None
     else:
         try:
             reader = soup.select_one(readdiv)

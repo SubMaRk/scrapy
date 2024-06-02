@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup as bs
 import time
 import datetime
 from function import main
-from urllib.parse import urlparse
 import urllib.parse
 import re
 import os
@@ -17,64 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
-
-# General
-from include.mangareader.general import oremanga
-from include.mangareader.general import manga168
-from include.mangareader.general import thaimanga
-from include.mangareader.general import singmanga
-from include.mangareader.general import manga689
-from include.mangareader.general import dragonmanga
-from include.mangareader.general import mangakimi
-from include.mangareader.general import mangastep
-from include.mangareader.general import reapertrans
-from include.mangareader.general import tanukimanga
-from include.mangareader.general import spymanga
-from include.mangareader.general import mafiamanga
-from include.mangareader.general import xenonmanga
-from include.mangareader.general import manga108
-from include.mangareader.general import asurahunter
-from include.mangareader.general import flashmanga
-from include.mangareader.general import sodsaime
-from include.mangareader.general import murimmanga
-from include.mangareader.general import moodtoon
-from include.mangareader.general import pedmanga
-from include.mangareader.general import toomtammanga
-from include.mangareader.general import mikumanga
-from include.mangareader.general import jojimanga
-from include.mangareader.general import kumomanga
-from include.mangareader.general import hippomanga
-from include.mangareader.general import inumanga
-from include.mangareader.general import makimaaaaa
-from include.mangareader.general import slowmanga
-from include.mangareader.general import mangawei
-from include.mangareader.general import kazetorimanga
-from include.mangareader.general import godmanga
-from include.mangareader.general import upmanga
-from include.mangareader.general import gomanga
-from include.mangareader.general import mangathai
-from include.mangareader.general import skoiizmanga
-from include.mangareader.general import germa66
-from include.mangareader.general import romancemanga
-from include.mangareader.general import manhwathailand
-from include.mangareader.general import mangaza
-from include.mangareader.general import rosemanga
-from include.mangareader.general import mangayipun
-from include.mangareader.general import seetoon
-from include.mangareader.general import mangasugoi
-from include.mangareader.general import mangai
-from include.mangareader.general import rankermanga
-from include.mangareader.general import manga248
-from include.mangareader.general import manhwathaiplus
-from include.mangareader.general import thetoon101
-from include.mangareader.general import onemanga
-from include.mangareader.general import popmanga
-from include.mangareader.general import mangalami
-from include.mangareader.general import haremmanga
-
-# Adult
-from include.mangareader.adult import toonhunter
-from include.mangareader.adult import ntrmanga
+from include.mangareader import all
 
 def get_user_agent():
     # Get all the latest user agents
@@ -100,7 +42,7 @@ def bssoup(url):
     # Set headers
     headers = getHeaders()
     max_retires = 6
-    delay = 15
+    delay = 10
     for retry in range(max_retires):
         try:
             response = rq.get(url, headers=headers)
@@ -124,121 +66,6 @@ def bssoup(url):
 
 def gettime():
     return time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
-
-def getConfig(url):
-    parseURL = urlparse(url)
-    domain = parseURL.netloc.replace('www.', '')
-
-    if domain == "oremanga.net":
-        return oremanga.CONFIGURATIONS.get(domain)
-    elif domain == "manga168.com":
-        return manga168.CONFIGURATIONS.get(domain)
-    elif domain == "thaimanga.net":
-        return thaimanga.CONFIGURATIONS.get(domain)
-    elif domain == "sing-manga.com":
-        return singmanga.CONFIGURATIONS.get(domain)
-    elif domain == "manga689.com":
-        return manga689.CONFIGURATIONS.get(domain)
-    elif domain == "toonhunter.com":
-        return toonhunter.CONFIGURATIONS.get(domain)
-    elif domain == "dragon-manga.com":
-        return dragonmanga.CONFIGURATIONS.get(domain)
-    elif domain == "mangakimi.com":
-        return mangakimi.CONFIGURATIONS.get(domain)
-    elif domain == "mangastep.com":
-        return mangastep.CONFIGURATIONS.get(domain)
-    elif domain == "reapertrans.com":
-        return reapertrans.CONFIGURATIONS.get(domain)
-    elif domain == "tanuki-manga.com":
-        return tanukimanga.CONFIGURATIONS.get(domain)
-    elif domain == "spy-manga.com":
-        return spymanga.CONFIGURATIONS.get(domain)
-    elif domain == "mafia-manga.com":
-        return mafiamanga.CONFIGURATIONS.get(domain)
-    elif domain == "ntr-manga.com":
-        return ntrmanga.CONFIGURATIONS.get(domain)
-    elif domain == "xenon-manga.com":
-        return xenonmanga.CONFIGURATIONS.get(domain)
-    elif domain == "108-manga.com":
-        return manga108.CONFIGURATIONS.get(domain)
-    elif domain == "asurahunter.com":
-        return asurahunter.CONFIGURATIONS.get(domain)
-    elif domain == "flash-manga.com":
-        return flashmanga.CONFIGURATIONS.get(domain)
-    elif domain == "xn--l3c0azab5a2gta.com":
-        return sodsaime.CONFIGURATIONS.get(domain)
-    elif domain == "murim-manga.com":
-        return murimmanga.CONFIGURATIONS.get(domain)
-    elif domain == "moodtoon.com":
-        return moodtoon.CONFIGURATIONS.get(domain)
-    elif domain == "ped-manga.com":
-        return pedmanga.CONFIGURATIONS.get(domain)
-    elif domain == "toomtam-manga.com":
-        return toomtammanga.CONFIGURATIONS.get(domain)
-    elif domain == "miku-manga.com":
-        return mikumanga.CONFIGURATIONS.get(domain)
-    elif domain == "joji-manga.com":
-        return jojimanga.CONFIGURATIONS.get(domain)
-    elif domain == "kumomanga.net":
-        return kumomanga.CONFIGURATIONS.get(domain)
-    elif domain == "hippomanga.com":
-        return hippomanga.CONFIGURATIONS.get(domain)
-    elif domain == "inu-manga.com":
-        return inumanga.CONFIGURATIONS.get(domain)
-    elif domain == "makimaaaaa.com":
-        return makimaaaaa.CONFIGURATIONS.get(domain)
-    elif domain == "slow-manga.com":
-        return slowmanga.CONFIGURATIONS.get(domain)
-    elif domain == "mangawei.com":
-        return mangawei.CONFIGURATIONS.get(domain)
-    elif domain == "kazetori-manga.com":
-        return kazetorimanga.CONFIGURATIONS.get(domain)
-    elif domain == "god-manga.com":
-        return godmanga.CONFIGURATIONS.get(domain)
-    elif domain == "up-manga.com":
-        return upmanga.CONFIGURATIONS.get(domain)
-    elif domain == "go-manga.com":
-        return gomanga.CONFIGURATIONS.get(domain)
-    elif domain == "xn--72ca2cvbi6fe9m.com":
-        return mangathai.CONFIGURATIONS.get(domain)
-    elif domain == "skoiiz-manga.com":
-        return skoiizmanga.CONFIGURATIONS.get(domain)
-    elif domain == "germa-66.com":
-        return germa66.CONFIGURATIONS.get(domain)
-    elif domain == "romance-manga.com":
-        return romancemanga.CONFIGURATIONS.get(domain)
-    elif domain == "manhwa-thailand.com":
-        return manhwathailand.CONFIGURATIONS.get(domain)
-    elif domain == "manhwathaiplus.net":
-        return manhwathaiplus.CONFIGURATIONS.get(domain)
-    elif domain == "manga-za.net":
-        return mangaza.CONFIGURATIONS.get(domain)
-    elif domain == "rose-manga.com":
-        return rosemanga.CONFIGURATIONS.get(domain)
-    elif domain == "xn--72cas2cj6a4hf4b5a8oc.com":
-        return mangayipun.CONFIGURATIONS.get(domain)
-    elif domain == "seetoon.net":
-        return seetoon.CONFIGURATIONS.get(domain)
-    elif domain == "manga-sugoi.com":
-        return mangasugoi.CONFIGURATIONS.get(domain)
-    elif domain == "manga-i.com":
-        return mangai.CONFIGURATIONS.get(domain)
-    elif domain == "ranker-manga.com":
-        return rankermanga.CONFIGURATIONS.get(domain)
-    elif domain == "manga248.com":
-        return manga248.CONFIGURATIONS.get(domain)
-    elif domain == "thetoon101.com":
-        return thetoon101.CONFIGURATIONS.get(domain)
-    elif domain == "one-manga.com":
-        return onemanga.CONFIGURATIONS.get(domain)
-    elif domain == "popsmanga.com":
-        return popmanga.CONFIGURATIONS.get(domain)
-    elif domain == "mangalami.com":
-        return mangalami.CONFIGURATIONS.get(domain)
-    elif domain == "haremmanga.net":
-        return haremmanga.CONFIGURATIONS.get(domain)
-    else:
-        return None
 
 def findChapters(section, div):
     print(f"Finding chapters from {div}...")
@@ -274,7 +101,7 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
 
     # get the config for the domain
     print(f"Getting configuration for {url}...")
-    config = getConfig(url)
+    config = all.getConfig(url)
     if config is None:
         if debug is True:
             print("Error! Missing the configuration file to process this URL.")
@@ -421,7 +248,7 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
         chapterslist = chapters.find_all('li')
         beforecount = len(chapterslist)
     except Exception as e:
-        print(f"Error finding status from {getstatus}: {e}")
+        print(f"Error finding chapter from {getchapterlist}: {e}")
         chapterslist = ''
 
     if chapterslist:
@@ -727,10 +554,14 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
             print(f"Trying to find images from {chapterURL}...")
             script = soup.find("script", string=re.compile(r'ts_reader\.run'))
             # Extract the JSON-like text from the script tag
-            pattern = r'ts_reader\.run\((.+?)\);'
+            pattern = r'ts_reader\.run\((.+?)\)'
             match = re.search(pattern, script.string)
             if match:
-                json_data = json.loads(match.group(1))
+                # Replace !1 with true and !0 with false
+                json_text = match.group(1)
+                json_text = re.sub(r'!1', 'true', json_text)
+                json_text = re.sub(r'!0', 'false', json_text)
+                json_data = json.loads(json_text)
                 # Check for 'sources' in JSON data and extract image links
                 if 'sources' in json_data and len(json_data['sources']) > 0:
                     image_list = json_data['sources'][0].get('images', [])
@@ -743,35 +574,43 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
     elif readencrypt is True:
         count = main.countFiles(chapterPath)
         if count > 0:
+            print("Already processed this chapter.")
             return None
         
-        options = Options()
-        driver = webdriver.Chrome(options=options)
-        driver.get(chapterURL)
+        attempt = 0
+        max_retries = 3
 
-        try:
-            # Wait for the div to be present
-            imgdiv = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
-            )
-            ranmouse(driver)
-            dc_windowsize(driver)
-            time.sleep(wait)
-            if debug is True:
-                main.waitforact()
-            rmElements(driver, readdiv)
-            if debug is True:
-                main.waitforact()
-            captureimg(driver, readdiv, chapter, chapterPath)
+        for attempt in range(max_retries):
+            try:
+                options = Options()
+                driver = webdriver.Chrome(options=options)
+                driver.get(chapterURL)
+                # Wait for the div to be present
+                imgdiv = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
+                )
+                ranmouse(driver)
+                time.sleep(wait)
+                if debug is True:
+                    main.waitforact()
+                rmElements(driver, readdiv)
+                dc_windowsize(driver)
+                if debug is True:
+                    main.waitforact()
+                captureimg(driver, readdiv, chapter, chapterPath)
+                driver.quit()
 
-        except Exception as e:
-            print(f"Error: {e}")
-            currenttime = gettime()
-            main.write_file(logfile, f"{currenttime}: Failed to capture webpage from {chapterURL}.\n")
-            return None
-        
-        driver.quit()
-        return True
+                if main.countFiles(chapterPath) > 0:
+                    print("Screenshot successfully taken.")
+                    return True
+            except Exception as e:
+                print(f"Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(3)
+                else:
+                    currenttime = gettime()
+                    main.write_file(logfile, f"{currenttime}: Failed to capture webpage from {chapterURL}.\n")
+                    return None
     else:
         try:
             reader = soup.select_one(readdiv)
