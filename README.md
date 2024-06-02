@@ -147,44 +147,44 @@ python scrapy.py -m <manga_url> -e 10 -o <output_folder> -wt 1 -it 4 -d
 
 | **No.** | **Type**  | **Domain**              |          **Name**          | **LANGUAGE** | **Status** |
 |---------|-----------|-------------------------|----------------------------|--------------|------------|
-|   001   |  General  | nabee-manga.com         | Nabee Manga                |     Thai     |    [✅]    |
-|   002   |  General  | manga-post.com          | Manga Post                 |     Thai     |    [🔴]    |
-|   003   |  General  | sixmanga.com            | Six Manga                  |     Thai     |    [✅]    |
-|   004   |  General  | snap-manga.com          | Snap Manga                 |     Thai     |    [✅]    |
-|   005   |  General  | manga-lc.net            | Manga LC                   |     Thai     |    [✅]    |
-|   006   |  General  | mangaisekaithai.com     | Manga Isekai Thai          |     Thai     |    [🔴]    |
-|   007   |  General  | cats-translator.com     | Cats Translator            |     Thai     |    [🔴]    |
-|   008   |  General  | manga191.com            | Manga 191                  |     Thai     |    [🔴]    |
-|   009   |  General  | rh2plusmanga.com        | RH2 Plus Manga             |     Thai     |    [🔴]    |
+|   001   |  General  | nabee-manga.com         | Nabee-Manga                |     Thai     |    [✅]    |
+|   002   |  General  | manga-post.com          | Manga-Post                 |     Thai     |    [✅]    |
+|   003   |  General  | sixmanga.com            | Sixmanga                   |     Thai     |    [✅]    |
+|   004   |  General  | snap-manga.com          | Snap-Manga                 |     Thai     |    [✅]    |
+|   005   |  General  | manga-lc.net            | Manga-LC                   |     Thai     |    [✅]    |
+|   006   |  General  | mangaisekaithai.com     | MangaIsekaiThai            |     Thai     |    [✅]    |
+|   007   |  General  | cats-translator.com     | Cats-Translator            |     Thai     |    [✅]    |
+|   008   |  General  | manga191.com            | Manga191                   |     Thai     |    [✅]    |
+|   009   |  General  | rh2plusmanga.com        | RH2PlusManga               |     Thai     |    [✅]    |
 |   010   |  General  | mangasuper.com          | Manga Super                |     Thai     |    [🔴]    |
-|   011   |  General  | doodmanga.com           | Dood Manga                 |     Thai     |    [✅]    |
+|   011   |  General  | doodmanga.com           | DoodManga                  |     Thai     |    [✅]    |
 |   012   |  General  | catzaa.com              | Catzaa                     |     Thai     |    [🔴]    |
 |   013   |  General  | moritoon.com            | Moritoon                   |     Thai     |    [✅]    |
-|   014   |  General  | nano-manga.com          | Nano Manga                 |     Thai     |    [🔴]    |
-|   015   |  General  | manga-uptocats.com      | Manga Uptocats             |     Thai     |    [🔴]    |
-|   016   |  General  | haremmanhua.com         | Harem Manhua               |     Thai     |    [✅]    |
+|   014   |  General  | nano-manga.com          | Nano-Manga                 |     Thai     |    [🔴]    |
+|   015   |  General  | manga-uptocats.com      | Manga-Uptocats             |     Thai     |    [🔴]    |
+|   016   |  General  | haremmanhua.com         | HaremManhua                |     Thai     |    [✅]    |
 |   017   |  General  | manghaha.com            | Manghaha                   |     Thai     |    [🔴]    |
 |   018   |  General  | dokimori.com            | Dokimori                   |     Thai     |    [🔴]    |
-|   019   |  General  | kuro-manga.com          | Kuro Manga                 |     Thai     |    [🔴]    |
-|   020   |  General  | manhwabreakup.com       | Manhwa Breakup             |     Thai     |    [🔴]    |
-|   021   |  General  | manhuabug.com           | Manhua Bug                 |     Thai     |    [✅]    |
+|   019   |  General  | kuro-manga.com          | Kuro-Manga                 |     Thai     |    [🔴]    |
+|   020   |  General  | manhwabreakup.com       | ManhwaBreakup              |     Thai     |    [🔴]    |
+|   021   |  General  | manhuabug.com           | ManhuaBug                  |     Thai     |    [✅]    |
 |   022   |  General  | thaitoon.net            | Thaitoon                   |     Thai     |    [🔴]    |
 |   023   |  General  | zurushin.com            | Zurushin                   |     Thai     |    [🔴]    |
-|   024   |  General  | manhuathai.com          | Manhua Thai                |     Thai     |    [✅]    |
-|   025   |  General  | chocomanga.com          | Choco Manga                |     Thai     |    [✅]    |
-|   026   |  General  | wasabith.com            | Wasabi Th                  |     Thai     |    [🔴]    |
-|   027   |  General  | kapimanga.com           | Kapi Manga                 |     Thai     |    [✅]    |
-|   028   |  General  | kumotran.com            | Kumo Tran                  |     Thai     |    [✅]    |
-|   029   |  General  | manhuakey.com           | Manhua Key                 |     Thai     |    [✅]    |
-|   030   |   Adult   | doujinfast.com          | Doujin Fast                |     Thai     |    [🔴]    |
-|   031   |   Adult   | doujinx-h.com           | Doujin X-H                 |     Thai     |    [🔴]    |
-|   032   |   Adult   | doujinza.com            | Doujin Za                  |     Thai     |    [🔴]    |
-|   033   |   Adult   | kuro-doujin.com         | Kuro Doujin                |     Thai     |    [🔴]    |
-|   034   |   Adult   | doujin-lc.net           | Doujin LC                  |     Thai     |    [🔴]    |
-|   035   |   Adult   | doujinsuki.com          | Doujin Suki                |     Thai     |    [🔴]    |
-|   036   |   Adult   | superdoujin.org         | Super Doujin               |     Thai     |    [🔴]    |
-|   037   |   Adult   | yaoi-y.com              | Yaoi Y                     |     Thai     |    [🔴]    |
-|   038   |   Adult   | ok-doujinx.com          | OK Doujinx                 |     Thai     |    [🔴]    |
+|   024   |  General  | manhuathai.com          | ManhuaThai                 |     Thai     |    [✅]    |
+|   025   |  General  | chocomanga.com          | ChocoManga                 |     Thai     |    [✅]    |
+|   026   |  General  | wasabith.com            | WasabiTh                   |     Thai     |    [🔴]    |
+|   027   |  General  | kapimanga.com           | KapiManga                  |     Thai     |    [✅]    |
+|   028   |  General  | kumotran.com            | KumoTran                   |     Thai     |    [✅]    |
+|   029   |  General  | manhuakey.com           | ManhuaKey                  |     Thai     |    [✅]    |
+|   030   |   Adult   | doujinfast.com          | DoujinFast                 |     Thai     |    [🔴]    |
+|   031   |   Adult   | doujinx-h.com           | Doujinx-H                  |     Thai     |    [🔴]    |
+|   032   |   Adult   | doujinza.com            | DoujinZa                   |     Thai     |    [🔴]    |
+|   033   |   Adult   | kuro-doujin.com         | Kuro-Doujin                |     Thai     |    [🔴]    |
+|   034   |   Adult   | doujin-lc.net           | Doujin-LC                  |     Thai     |    [🔴]    |
+|   035   |   Adult   | doujinsuki.com          | DoujinSuki                 |     Thai     |    [🔴]    |
+|   036   |   Adult   | superdoujin.org         | SuperDoujin                |     Thai     |    [🔴]    |
+|   037   |   Adult   | yaoi-y.com              | Yaoi-Y                     |     Thai     |    [🔴]    |
+|   038   |   Adult   | ok-doujinx.com          | OK-Doujinx                 |     Thai     |    [🔴]    |
 
 **Other Sites**
 
