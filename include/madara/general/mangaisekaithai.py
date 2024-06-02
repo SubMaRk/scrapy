@@ -1,7 +1,7 @@
-# CONFIG FILE FOR HAREMMANHUA.COM
+# CONFIG FILE FOR MANGAISEKAITHAI.COM
 
 CONFIGURATIONS = {
-    "haremmanhua.com": {
+    "mangaisekaithai.com": {
         "getsection": "div.site-content",
         "gettitle": "div.post-title h1",
         "gettype": "Type",
@@ -13,6 +13,6 @@ CONFIGURATIONS = {
         "readdiv": "div.reading-content",
         "delaylist": True,
         "readjson": False,
-        "readencrypt": False
+        "readencrypt": True
     }
 }

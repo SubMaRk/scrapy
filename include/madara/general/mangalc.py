@@ -11,7 +11,7 @@ CONFIGURATIONS = {
         "getcover": "div.summary_image a img",
         "getchaptertitle": "h1#chapter-heading",
         "readdiv": "div.reading-content",
-        "delaylist": False,
+        "delaylist": True,
         "readjson": False,
         "readencrypt": False
     }

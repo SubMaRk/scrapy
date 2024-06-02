@@ -1,7 +1,7 @@
-# CONFIG FILE FOR HAREMMANHUA.COM
+# CONFIG FILE FOR RH2PLUSMANGA.COM
 
 CONFIGURATIONS = {
-    "haremmanhua.com": {
+    "rh2plusmanga.com": {
         "getsection": "div.site-content",
         "gettitle": "div.post-title h1",
         "gettype": "Type",
