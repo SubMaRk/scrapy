@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import urllib.parse
 import re
 import os
-import json
+import random
 import concurrent.futures
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,22 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
-
-# General
-from include.madara.general import kapimanga
-from include.madara.general import chocomanga
-from include.madara.general import moritoon
-from include.madara.general import mangalc
-from include.madara.general import manhuathai
-from include.madara.general import manhuabug
-from include.madara.general import sixmanga
-from include.madara.general import nabeemanga
-from include.madara.general import kumotran
-from include.madara.general import manhuakey
-from include.madara.general import doodmanga
-from include.madara.general import haremmanhua
-
-# Adult
+from include.madara import all
 
 
 def get_user_agent():
@@ -63,7 +48,12 @@ def bypasssecurity(url):
         try:
             driver.get(url)
             # Wait until the document.readyState is 'complete'
-            time.sleep(6)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//body/*')))
+            ranmouse(driver)
+            # Wait until the document.readyState is 'complete'
+            time.sleep(3)
+            driver.execute_script("window.stop();")
             soup = bs(driver.page_source, "html.parser")
             break
         except Exception as e:
@@ -101,37 +91,6 @@ def bssoup(url):
 def gettime():
     return time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
 
-def getConfig(url):
-    parseURL = urlparse(url)
-    domain = parseURL.netloc.replace('www.', '')
-
-    if domain == "kapimanga.com":
-        return kapimanga.CONFIGURATIONS.get(domain)
-    elif domain == "chocomanga.com":
-        return chocomanga.CONFIGURATIONS.get(domain)
-    elif domain == "moritoon.com":
-        return moritoon.CONFIGURATIONS.get(domain)
-    elif domain == "manga-lc.net":
-        return mangalc.CONFIGURATIONS.get(domain)
-    elif domain == "manhuathai.com":
-        return manhuathai.CONFIGURATIONS.get(domain)
-    elif domain == "manhuabug.com":
-        return manhuabug.CONFIGURATIONS.get(domain)
-    elif domain == "sixmanga.com":
-        return sixmanga.CONFIGURATIONS.get(domain)
-    elif domain == "nabee-manga.com":
-        return nabeemanga.CONFIGURATIONS.get(domain)
-    elif domain == "kumotran.com":
-        return kumotran.CONFIGURATIONS.get(domain)
-    elif domain == "manhuakey.com":
-        return manhuakey.CONFIGURATIONS.get(domain)
-    elif domain == "doodmanga.com":
-        return doodmanga.CONFIGURATIONS.get(domain)
-    elif domain == "haremmanhua.com":
-        return haremmanhua.CONFIGURATIONS.get(domain)
-    else:
-        return None
-
 def findChapters(section, div):
     print(f"Finding chapters from {div}...")
 
@@ -166,7 +125,7 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
 
     # get the config for the domain
     print(f"Getting configuration for {url}...")
-    config = getConfig(url)
+    config = all.getConfig(url)
     if config is None:
         if debug is True:
             print("Error! Missing the configuration file to process this URL.")
@@ -207,10 +166,7 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
     print(f"Fetching manga information...")
 
     # Bypass for some website
-    parseURL = urlparse(url)
-    domain = parseURL.netloc.replace('www.', '')
-    bypassdomains = ['manga-lc.net', 'haremmanhua.com']
-    if domain in bypassdomains:
+    if delaylist is True:
         soup = bypasssecurity(url)
     else:
         soup = bssoup(url)
@@ -299,7 +255,7 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
         chapterslist = chapters.find_all('li')
         beforecount = len(chapterslist)
     except Exception as e:
-        print(f"Error finding status from {getstatus}: {e}")
+        print(f"Error finding chapterlist from {getchapterlist}: {e}")
         chapterslist = ''
 
     if chapterslist:
@@ -422,7 +378,6 @@ def fetchmanga(url, start, end, output, worktheads, imagethreads, wait, listchap
                 print(f"Error to downloading {url}.")
                 currentTime = gettime()
                 main.write_file(logfile, f"{currentTime}: Failed to download the image {mgCover} from {url}.\n")
-                return None
             else:
                 print(f'{mgCover} => {cover_name}')
                 compare_result = main.compare_size(mgCover, cover_path, cover_name, logfile)
@@ -481,29 +436,46 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     parseURL = urlparse(chapterURL)
     domain = parseURL.netloc.replace('www.', '')
     bypassdomains = ['manga-lc.net']
+    chapter = ''
     if domain in bypassdomains:
         soup = bypasssecurity(chapterURL)
     else:
         soup = bssoup(chapterURL)
 
+    print(f"Chapter Link : ", chapterURL)
+
     # Fiind chapter title
     try:
         chapterTitle = soup.select_one(getchaptertitle).getText()
         titlename = re.sub(r'[\\/:"*?<>|]', '', chapterTitle)
+        print(f"Title : ", titlename)
+        print(f"Chapter : ", chapterTitle)
         chapter = main.getchapter(mgTitle, titlename)
     except Exception as e:
         pass
     
+    print(chapter)
     if not chapter:
         try:
             chapterID = main.manga_id(chapterURL)
             chapter = main.getchapter(mangaID, chapterID)
         except Exception as e:
+            pass
+    print(chapter)
+    if not chapter:
+        try:
+            # Parse the URL
+            decode_url = urllib.parse.urlparse(chapterURL)
+            # Split the path
+            path_parts = decode_url.path.split("/")
+            # Extract the last part (which should be the chapter number)
+            chapter = urllib.parse.unquote(path_parts[3])
+        except Exception as e:
             print(f"Error: {e}")
             currentTime = gettime()
             main.write_file(logfile, f"{currentTime}: Failed to find chapter number from {chapterURL}\n")
             return None
-        
+    print(chapter)
     chapterFoldername = f"Chapter-{chapter}"
     chapterPath = os.path.join(folderName, chapterFoldername)
     if not os.path.exists(chapterPath):
@@ -620,7 +592,12 @@ def findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPa
             try:
                 options = Options()
                 driver = webdriver.Chrome(options=options)
-                driver.get(chapterURL)
+                driver.set_page_load_timeout(30)
+                try:
+                    driver.get(chapterURL)
+                except Exception as e:
+                    raise
+
                 # Wait for the div to be present
                 imgdiv = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, readdiv))
@@ -831,3 +808,20 @@ def dc_windowsize(driver):
 
     # Set the new window size
     driver.set_window_size(width, height)
+
+def ranmouse(driver):
+    # Get the browser window size
+    window_size = driver.get_window_size()
+    max_x = window_size['width']
+    max_y = window_size['height']
+
+    # Generate random coordinates
+    x = random.randint(0, max_x)
+    y = random.randint(0, max_y)
+
+    # Create an ActionChains object
+    actions = ActionChains(driver)
+
+    # Move the mouse to the random coordinates
+    actions.move_by_offset(x, y).perform()
+    time.sleep(0.5)
