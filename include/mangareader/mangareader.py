@@ -539,7 +539,6 @@ def downloadImg(i, img, url, chapterURL, chapter, chapterPath, skipdomains, logf
             print(f"Error to downloading {url}.")
             currentTime = gettime()
             main.write_file(logfile, f"{currentTime}: Failed to download the image {img} from {chapterURL}.\n")
-            return None
         else:
             print(f'{img} => {image_name}')
             compare_result = main.compare_size(img, image_path, image_name, logfile)
