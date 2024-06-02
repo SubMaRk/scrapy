@@ -41,6 +41,12 @@ python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--out
 
 # Example
 
+Full code
+
+```bash
+python scrapy.py -m <manga_url> -s <start> -e <end> -o <output_folder> -wt <work_threads> -it <image_threads> -d <time_delay(s)> -l -d
+```
+
 Download chapters 1 to 10 of a manga from a given URL with 4 work threads and 4 image threads:
 
 ```bash
