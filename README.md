@@ -120,29 +120,28 @@ python scrapy.py -m <manga_url> -e 10 -o <output_folder> -wt 1 -it 4 -d
 |   047   |  General  | manga248.com            | manga248                   |     Thai     |    [✅]    |
 |   048   |  General  | haremmanga.net          | Haremmanga                 |     Thai     |    [✅]    |
 |   049   |  General  | one-manga.com           | ONE-MANGA                  |     Thai     |    [✅]    |
-|   050   |   Adult   | god-doujin.com          | God-Doujin                 |     Thai     |    [🔴]    |
-|   051   |   Adult   | doujin69.com            | Doujin69                   |     Thai     |    [🔴]    |
-|   052   |   Adult   | doujin-new.com          | Doujin-New                 |     Thai     |    [🔴]    |
-|   053   |   Adult   | oredoujin.com           | Oredoujin                  |     Thai     |    [🔴]    |
-|   054   |   Adult   | doujin-y.com            | Doujin-Y                   |     Thai     |    [🔴]    |
+|   050   |   Adult   | god-doujin.com          | God-Doujin                 |     Thai     |    [✅]    |
+|   051   |   Adult   | doujin69.com            | Doujin69                   |     Thai     |    [✅]    |
+|   052   |   Adult   | doujin-new.com          | Doujin-New                 |     Thai     |    [✅]    |
+|   053   |   Adult   | oredoujin.com           | Oredoujin                  |     Thai     |    [✅]    |
+|   054   |   Adult   | doujin-y.com            | Doujin-Y                   |     Thai     |    [✅]    |
 |   055   |   Adult   | toonhunter.com          | Toonhunter                 |     Thai     |    [✅]    |
-|   056   |   Adult   | doujinmoon.com          | Doujinmoon                 |     Thai     |    [🔴]    |
-|   057   |   Adult   | ecchi-doujin.com        | Ecchi-Doujin               |     Thai     |    [🔴]    |
-|   058   |   Adult   | doujin4u.com            | Doujin4u                   |     Thai     |    [🔴]    |
-|   059   |   Adult   | xn--69-uqi5m9an.com     | อิคึ69                       |     Thai     |    [🔴]    |
-|   060   |   Adult   | 108read.com             | 108Read                    |     Thai     |    [🔴]    |
-|   061   |   Adult   | ped-doujin.com          | Ped doujin                 |     Thai     |    [🔴]    |
-|   062   |   Adult   | eye-manga.com           | EYE-Manga                  |     Thai     |    [🔴]    |
-|   063   |   Adult   | manga-20.com            | Manga-20                   |     Thai     |    [🔴]    |
-|   064   |   Adult   | manga-yuri.com          | Manga-Yuri                 |     Thai     |    [🔴]    |
-|   065   |   Adult   | tora-manga.com          | Tora-manga                 |     Thai     |    [🔴]    |
-|   066   |   Adult   | manga-bl.com            | Manga-BL                   |     Thai     |    [🔴]    |
-|   067   |   Adult   | manga-yaoi.com          | Manga-Yaoi                 |     Thai     |    [🔴]    |
-|   068   |   Adult   | xn--72ca0fgy7cem.com    | มังงะวาย.Com                |     Thai     |    [🔴]    |
+|   056   |   Adult   | doujinmoon.com          | Doujinmoon                 |     Thai     |    [✅]    |
+|   057   |   Adult   | ecchi-doujin.com        | Ecchi-Doujin               |     Thai     |    [✅]    |
+|   058   |   Adult   | doujin4u.com            | Doujin4u                   |     Thai     |    [✅]    |
+|   059   |   Adult   | xn--69-uqi5m9an.com     | อิคึ69                       |     Thai     |    [✅]    |
+|   060   |   Adult   | 108read.com             | 108Read                    |     Thai     |    [✅]    |
+|   061   |   Adult   | ped-doujin.com          | Ped doujin                 |     Thai     |    [✅]    |
+|   062   |   Adult   | eye-manga.com           | EYE-Manga                  |     Thai     |    [✅]    |
+|   063   |   Adult   | manga-20.com            | Manga-20                   |     Thai     |    [✅]    |
+|   064   |   Adult   | manga-yuri.com          | Manga-Yuri                 |     Thai     |    [✅]    |
+|   065   |   Adult   | tora-manga.com          | Tora-manga                 |     Thai     |    [✅]    |
+|   066   |   Adult   | manga-bl.com            | Manga-BL                   |     Thai     |    [✅]    |
+|   067   |   Adult   | manga-yaoi.com          | Manga-Yaoi                 |     Thai     |    [✅]    |
+|   068   |   Adult   | xn--72ca0fgy7cem.com    | มังงะวาย.Com                |     Thai     |    [✅]    |
 |   069   |   Adult   | ntr-manga.com           | NTR-Manga                  |     Thai     |    [✅]    |
-|   070   |   Adult   | 18ntr.com               | 18NTR                      |     Thai     |    [🔴]    |
-
-
+|   070   |   Adult   | 18ntr.com               | 18NTR                      |     Thai     |    [✅]    |
+|   071   |   Adult   | godhman.net             | GODHMAN                    |     Thai     |    [✅]    |
 
 **Madara Template Sites**
 
