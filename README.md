@@ -145,8 +145,6 @@ python scrapy.py -m <manga_url> -e 10 -o <output_folder> -wt 1 -it 4 -d
 
 **Madara Template Sites**
 
-Here's the conversion of the given table to the specified format:
-
 | **No.** | **Type**  | **Domain**              |          **Name**          | **LANGUAGE** | **Status** |
 |---------|-----------|-------------------------|----------------------------|--------------|------------|
 |   001   |  General  | nabee-manga.com         | Nabee Manga                |     Thai     |    [✅]    |
@@ -189,8 +187,6 @@ Here's the conversion of the given table to the specified format:
 |   038   |   Adult   | ok-doujinx.com          | OK Doujinx                 |     Thai     |    [🔴]    |
 
 **Other Sites**
-
-Here's the conversion for the additional table:
 
 | **No.** | **Type**  | **Domain**              |          **Name**          | **LANGUAGE** | **Status** |
 |---------|-----------|-------------------------|----------------------------|--------------|------------|
