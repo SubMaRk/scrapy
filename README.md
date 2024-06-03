@@ -23,7 +23,7 @@ pip install -r requirements.txt
 # Usage
 
 ```bash
-python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--output OUTPUT] [--workthreads WORKTHREADS] [--imagethreads IMAGETHREADS] [--wait WAIT] [--list] [--debug]
+python scrapy.py [-h] [--murl MURL] [--start START] [--end END] [--output OUTPUT] [--workthreads WORKTHREADS] [--imagethreads IMAGETHREADS] [--wait WAIT] [--list] [--debug]
 ```
 
 **Arguments**
@@ -35,7 +35,7 @@ python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--out
 - `--output`, `-o OUTPUT`: Enter output path to save downloaded.
 - `--workthreads`, `-t WORKTHREADS`: Enter amount of threads to run.
 - `--imagethreads`, `-t IMAGETHREADS`: Enter amount of threads to download image(s).
-- `--wait`, `-d WAIT`: Enter time to delay read page until loaded (In seconds; Use for images encrypted in readpage).
+- `--wait`, `-w WAIT`: Enter time to delay read page until loaded (In seconds; Use for images encrypted in readpage).
 - `--list`, `-l`: Display Chapter list only.
 - `--debug`, `-d`: Start with debug mode.
 
@@ -44,7 +44,7 @@ python manga_downloader.py [-h] [--murl MURL] [--start START] [--end END] [--out
 Full code
 
 ```bash
-python scrapy.py -m <manga_url> -s <start> -e <end> -o <output_folder> -wt <work_threads> -it <image_threads> -d <time_delay(s)> -l -d
+python scrapy.py -m <manga_url> -s <start> -e <end> -o <output_folder> -wt <work_threads> -it <image_threads> -w <time_delay(s)> -l -d
 ```
 
 Download chapters 1 to 10 of a manga from a given URL with 4 work threads and 4 image threads:
