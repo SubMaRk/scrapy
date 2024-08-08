@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup as bs
 import time
 import datetime
 from function import main
+from urllib.parse import urlparse
 import urllib.parse
 import re
 import os
@@ -93,10 +94,16 @@ def findCover(section, div):
         print(f"Error finding status {div}: {e}")
         return None
 
-def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchapter, debug):
+def fetchmanga(url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update):
     global readdiv, readjson, readencrypt
     output = os.path.join(output, "Download")
-    logfile = os.path.join(output, "error.log")
+    logfolder = "log"
+    main.mkdir(logfolder)
+    logfile = os.path.join(logfolder, "error.log")
+    notablefile = os.path.join(logfolder, "nochapter.log")
+    successfile = os.path.join(logfolder, "finished.log")
+    mangaID = main.manga_id(url)
+
     main.mkdir(output)
 
     # get the config for the domain
@@ -143,7 +150,6 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
     # Find Section
     print(f"Fetching manga information...")
     soup = bssoup(url)
-    mangaID = main.manga_id(url)
     
     try:
         section = soup.select_one(getsection)
@@ -251,6 +257,7 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
         print(f"Error finding chapter from {getchapterlist}: {e}")
         chapterslist = ''
 
+    titlelinks = []
     if chapterslist:
         data_num = ''
         first_chapter = chapterslist[0]
@@ -305,9 +312,10 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
 
         # Store the chapters url list;
         chapterslink = []
+    
         for i, chapter in enumerate(chapterslist):
-            url = chapter.find('a')['href']
-            if not url.startswith('https'):
+            cpurl = chapter.find('a')['href']
+            if not cpurl.startswith('https'):
                 break
             try:
                 title = chapter.find('a')['title']
@@ -315,7 +323,8 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
                 title = chapter.find('a').find('span')
                 title = title.get_text() if title else None
 
-            parseurl = urllib.parse.unquote(url)
+            parseurl = urllib.parse.unquote(cpurl)
+            titlelinks.append([i+1, title, parseurl])
             if listchapter is True:
                 print(f"{i+1} | {title} : {parseurl}")
             else:
@@ -331,6 +340,7 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
     else:
         currenttime = gettime()
         main.write_file(logfile, f"{currenttime}: Failed to find chapter table from {url}\n")
+        main.write_file(notablefile, f"{url}\n")
         return None
     print(f"Chapters: {aftercount}")
     if debug is True:
@@ -385,6 +395,32 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
     if debug is True:
         main.waitforact()
 
+    # Save data to json file
+    if savejson is True:
+        datafolder = "Data"
+        main.mkdir(datafolder)
+        parseURL = urlparse(url)
+        domain = parseURL.netloc.replace('www.', '')
+        dname = domain.split('.')[0]
+        dpath = os.path.join(datafolder, dname)
+        if not os.path.exists(dpath):
+            main.mkdir(dpath)
+
+        jsonfile = os.path.join(dpath, f"{mgTitle}.json")
+        if not os.path.exists(jsonfile):
+            main.savejson(jsonfile, mgTitle=mgTitle, mgtype=mgtype, mggenres=mggenres, mgstatus=mgstatus, chaptercount=aftercount)
+            for i, data in enumerate(titlelinks):
+                index, cptitle, cplink = data
+                main.savejson(jsonfile, chaptertitle=cptitle, chapterurl=cplink)
+        else:
+            main.savejson(jsonfile, mgTitle=mgTitle, mgtype=mgtype, mggenres=mggenres, mgstatus=mgstatus, chaptercount=aftercount)
+            mgtitle, mgtype, mggenres, mgStatus, chaptercount, chapterurls = main.readjson(jsonfile)
+        if update is True:
+            main.savejson(jsonfile, mgTitle=mgTitle, mgtype=mgtype, mggenres=mggenres, mgstatus=mgstatus)
+
+        if debug is True:
+            main.waitforact()
+    
     skipdomains = ['googleusercontent.com',
         'https://img.toon88.com',
         'https://a3.manga168.xyz',
@@ -412,27 +448,28 @@ def fetchmanga(url, start, end, output, workthreads, imagetheads, wait, listchap
 
         # Start fetching images from the chapter list;
         for i, chapter_url in enumerate(chapterslink):
-            print(f"Start processing {chapter_url}...")
-
-            future = executor.submit(preparedl, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagetheads, wait, logfile, debug)
-            futures.append(future)
-        
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                # Get the result of the completed future (if any)
-                result = future.result()
-                if result is not None:
-                    print(f"Thread finished with result")
+            if savejson is True:
+                if chapterurls is not None:
+                    if chapter_url in chapterurls:
+                        print(f"URL '{chapter_url}' already exists. Skipping addition.")
+                        continue
+                    else:
+                        print(f"Start processing {chapter_url}...")
+                        future = executor.submit(preparedl, i, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug, savejson, successfile, jsonfile)
+                        futures.append(future)
                 else:
-                    print(f"Thread finished without result")
+                    print(f"Start processing {chapter_url}...")
+                    future = executor.submit(preparedl, i, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug, savejson, successfile, jsonfile)
+                    futures.append(future)
+            else:
+                print(f"Start processing {chapter_url}...")
+                future = executor.submit(preparedl, i, chapter_url, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug, successfile, savejson)
+                futures.append(future)
 
-            except Exception as e:
-                print(f"Error: {e}")
-
-def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagetheads, wait, logfile, debug):
+def preparedl(i, chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, skipdomains, imagethreads, wait, logfile, debug, savejson, successfile, jsonfile=None):
     soup = bssoup(chapterURL)
 
-    # Fiind chapter title
+    # Find chapter title
     try:
         chapterTitle = soup.select_one(getchaptertitle).getText()
         titlename = re.sub(r'[\\/:"*?<>|]', '', chapterTitle)
@@ -442,14 +479,20 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     
     if not chapter:
         try:
-            chapterID = main.manga_id(chapterURL)
-            chapter = main.getchapter(mangaID, chapterID)
+            # Parse the URL
+            decode_url = urllib.parse.urlparse(chapterURL)
+            # Split the path
+            path_parts = decode_url.path.split("/")
+            # Extract the last part (which should be the chapter number)
+            chapter = urllib.parse.unquote(path_parts[3])
+            if not chapter:
+                chapter = i
         except Exception as e:
             print(f"Error: {e}")
             currentTime = gettime()
             main.write_file(logfile, f"{currentTime}: Failed to find chapter number from {chapterURL}\n")
             return None
-        
+    
     chapterFoldername = f"Chapter-{chapter}"
     chapterPath = os.path.join(folderName, chapterFoldername)
     main.mkdir(chapterPath)
@@ -457,35 +500,44 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
     getimg = findIMG(soup, chapterURL, readdiv, readjson, readencrypt, chapter, chapterPath, wait, logfile, debug)
     if getimg is True:
         print("Capture image from page successfully.")
+        success = []
+        if os.path.exists(successfile):
+            success = main.read_file(successfile)
+            if not url in success:
+                success = f"{url}\n"
+                main.write_file(successfile, success)
+                print("Added chapter URL to success file.")
+        else:
+            main.write_file(successfile, f"{url}\n")
+        if savejson is True:
+            main.savejson(jsonfile, chaptertitle=chapterFoldername, chapterurl=chapterURL)
     elif getimg is None:
         return None
     else:
         count = main.countFiles(chapterPath)
         if count == len(getimg):
+            success = []
+            if os.path.exists(successfile):
+                success = main.read_file(successfile)
+                if not url in success:
+                    success = f"{url}\n"
+                    main.write_file(successfile, success)
+                    print("Added chapter URL to success file.")
+            else:
+                main.write_file(successfile, f"{url}\n")
+            if savejson is True:
+                main.savejson(jsonfile, chaptertitle=chapterFoldername, chapterurl=chapterURL)
             return None
         
-        workers = imagetheads
+        workers = imagethreads
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
             futures = []
 
             # Start fetching images from the chapter list;
             for i, img in enumerate(getimg):
                 print(f"Start Downloading {img}...")
-
                 future = executor.submit(downloadImg, i, img, url, chapterURL, chapter, chapterPath, skipdomains, logfile)
                 futures.append(future)
-            
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    # Get the result of the completed future (if any)
-                    result = future.result()
-                    if result is not None:
-                        print(f"Download image successfully.")
-                    else:
-                        print(f"Failed to download image.")
-
-                except Exception as e:
-                    print(f"Error: {e}")
 
         # Check downloaded files
         downloadedFiles = main.countFiles(chapterPath)
@@ -495,13 +547,28 @@ def preparedl(chapterURL, url, mgTitle, getchaptertitle, mangaID, folderName, sk
             currentTime = gettime()
             main.write_file(logfile, f"{currentTime}: The number of downloaded files {downloadedFiles} from {chapterURL} not equal to expected files {len(getimg)}.\n")
             return None
+        else:
+            success = []
+            if os.path.exists(successfile):
+                success = main.read_file(successfile)
+                if not url in success:
+                    success = f"{url}\n"
+                    main.write_file(successfile, success)
+                    print("Added chapter URL to success file.")
+            else:
+                main.write_file(successfile, f"{url}\n")
+            if savejson is True:
+                main.savejson(jsonfile, chaptertitle=chapterFoldername, chapterurl=chapterURL)
 
 def downloadImg(i, img, url, chapterURL, chapter, chapterPath, skipdomains, logfile):
     if not img.startswith('https:') and img.startswith('//'):
         img = 'https:' + img
     # Remove invalid characters from link;
     if "%0A" in img:
-        img = img.replace('%0A', '')
+        img = img.replace("%0A", "")
+    # Remove invalid url from link;
+    if "https://doujin4u.com/wp-content/uploads/;" in img:
+        img = img.replace("https://doujin4u.com/wp-content/uploads/;", "")
 
     # Check extension;
     file_extension = os.path.splitext(img)[1]

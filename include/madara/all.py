@@ -19,8 +19,23 @@ from include.madara.general import catstranslator
 from include.madara.general import manga191
 from include.madara.general import mangasuper
 from include.madara.general import rh2plusmanga
+from include.madara.general import catzaa
+from include.madara.general import nanomanga
+from include.madara.general import mangauptocats
+from include.madara.general import manghaha
+from include.madara.general import dokimori
+from include.madara.general import kuromanga
+from include.madara.general import manhwabreakup
+from include.madara.general import thaitoon
+from include.madara.general import zurushin
 
 # Adult
+from include.madara.adult import doujinfast
+from include.madara.adult import doujinxh
+from include.madara.adult import doujinlc
+from include.madara.adult import kurodoujin
+from include.madara.adult import doujinza
+from include.madara.adult import superdoujin
 
 def getConfig(url):
     parseURL = urlparse(url)
@@ -59,8 +74,39 @@ def getConfig(url):
     elif domain == "manga191.com":
         return manga191.CONFIGURATIONS.get(domain)
     elif domain == "mangasuper.com":
-        return mangasuper.CONFIGURATIONS.get(domain)
+        return mangasuper.CONFIGURATIONS.get(domain) # TODO: Wait for bypassing Cloudflare
     elif domain == "rh2plusmanga.com":
         return rh2plusmanga.CONFIGURATIONS.get(domain)
+    elif domain == "catzaa.com":
+        return catzaa.CONFIGURATIONS.get(domain)
+    elif domain == "nano-manga.com":
+        return nanomanga.CONFIGURATIONS.get(domain)
+    elif domain == "manga-uptocats.com":
+        return mangauptocats.CONFIGURATIONS.get(domain)
+    elif domain == "manghaha.com":
+        return manghaha.CONFIGURATIONS.get(domain) # TODO: Wait for support chapter list pages
+    elif domain == "dokimori.com":
+        return dokimori.CONFIGURATIONS.get(domain)
+    elif domain == "kuro-manga.com":
+        return kuromanga.CONFIGURATIONS.get(domain)
+    elif domain == "manhwabreakup.com":
+        return manhwabreakup.CONFIGURATIONS.get(domain)
+    elif domain == "thaitoon.net":
+        return thaitoon.CONFIGURATIONS.get(domain)
+    elif domain == "zurushin.com":
+        return zurushin.CONFIGURATIONS.get(domain)
+    elif domain == "doujinfast.com":
+        return doujinfast.CONFIGURATIONS.get(domain)
+    elif domain == "doujinx-h.com":
+        return doujinxh.CONFIGURATIONS.get(domain)
+    elif domain == "doujin-lc.net":
+        return doujinlc.CONFIGURATIONS.get(domain) # TODO: Wait for bypassing Cloudflare
+    elif domain == "kuro-doujin.com":
+        return kurodoujin.CONFIGURATIONS.get(domain)
+    elif domain == "doujinza.com":
+        return doujinza.CONFIGURATIONS.get(domain)
+    elif domain == "superdoujin.org":
+        return superdoujin.CONFIGURATIONS.get(domain)
     else:
         return None
+    

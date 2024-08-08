@@ -25,9 +25,8 @@ def arr():
     parser.add_argument('--wait', '-w', dest='wait', metavar='WAIT', type=int, help="Enter time to delay read page until loaded (In second).")
     parser.add_argument('--list', '-l', dest='list', action='store_true', help="Display Chapter list only")
     parser.add_argument('--debug', '-d', dest='debug', action='store_true', help="Enable debug mode for check bug(s) from any process.")
-    parser.add_argument('--saveastext', '-sat', dest='saveastext', action='store_true', help="Save information as text.")
+    parser.add_argument('--savejson', '-j', dest='savejson', action='store_true', help="Save information as json.")
     parser.add_argument('--update', '-u', dest='update', action='store_true', help='Update from save information text files.')
-    parser.add_argument('--verifyimg', '-vi', dest='verifyimg', action='store_true', help='Enable check the images downloaded and save as text files')
     args = parser.parse_args()
 
     if args.murl is not None:
@@ -73,28 +72,23 @@ def arr():
         else:
             debug = False
 
-        if args.saveastext is True:
-            saveastext = True
+        if args.savejson is True:
+            savejson = True
         else:
-            saveastext = False
+            savejson = False
 
         if args.update is True:
             update = True
         else:
             update = False
-
-        if args.verifyimg is True:
-            verifyimg = True
-        else:
-            verifyimg = False
         
-        return manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug
+        return manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update
     else:
         exit(1)
 
 if __name__ == '__main__':
     # Get value from user input
-    manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug = arr()
+    manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update = arr()
     print()
     print("[------ USER INPUT ------]")
     print(f"Manga URL: {manga_url}")
@@ -106,26 +100,28 @@ if __name__ == '__main__':
     print(f"Delay: {wait}")
     print(f"List Chapters: {listchapter}")
     print(f"Debug Mode: {debug}")
+    print(f"Save Text: {savejson}")
+    print(f"Update: {update}")
     print()
 
     site = checkURL.checkURL(manga_url)
 
     if site == 'mangareader':
-        mangareader.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        mangareader.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site == 'madara':
-        madara.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        madara.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site == 'lolimanga':
-        lolimanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        lolimanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site =='mangasleep':
-        mangasleep.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        mangasleep.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site == 'kaichan':
-        kaichan.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        kaichan.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site =='manga00':
-        manga00.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        manga00.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site == 'toonsmanga':
-        toonsmanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        toonsmanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     elif site =='watashitachimanga':
-        watashitachimanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug)
+        watashitachimanga.fetchmanga(manga_url, start, end, output, workthreads, imagethreads, wait, listchapter, debug, savejson, update)
     else:
         print("URL not supported")
         exit()
