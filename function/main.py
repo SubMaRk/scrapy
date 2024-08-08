@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup as bs
 import time
 import os
 import re
+import json
+import socket
 import urllib.parse
 from tqdm import tqdm
 
@@ -76,16 +78,33 @@ def countFiles(path):
     return file_count
 
 def manga_id(manga_url):
+    # Define the simplified pattern to match the last part of the URL
+    pattern = re.compile(r"([^/]+)/?$")
+    # Parse the URL
     decode_url = urllib.parse.urlparse(manga_url)
-    manga_id = decode_url.path.split("/")
-    manga_id = urllib.parse.unquote(manga_id[2])
-    return manga_id
+    # Get the path part of the URL
+    urlpath = decode_url.path
+    # Search for the pattern in the path
+    match = pattern.search(urlpath)
+    # Extract the ID if a match is found
+    if match:
+        return match.group(1)
+    else:
+        return ''
 
 def dl_img(url, path, title, logfile):
     get_datetime = time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
     max_retries = 3  # Maximum number of download retries
-    timeout = 120  # Set a timeout for the download
+    timeout = 90  # Set a timeout for the download
     headers = getHeaders()
+
+    # Extract the host from the URL
+    host = url.split('//')[1].split('/')[0]
+    # Check if the host is online
+    if not isonline(host):
+        print(f"Host {host} is offline. Cannot download {url}.")
+        write_file(logfile, f"{get_datetime}: Host {host} is offline. Cannot download {url}.\n")
+        return None
 
     for i in range(max_retries):
         try:
@@ -116,7 +135,6 @@ def dl_img(url, path, title, logfile):
                 print(f"Error {e} occurred while downloading {url}.")
                 write_file(logfile, f"{get_datetime}: Error {e}. Failed to download {url}.\n")  # Log the error in a file
                 download = False
-
             else:
                 print(f"Error {e} occurred while downloading {url}. Retrying...")  # Retry the download
             time.sleep(2)  # Wait for 2 seconds before retrying
@@ -129,6 +147,15 @@ def dl_img(url, path, title, logfile):
         download = False
     
     return download
+
+def isonline(host, port=443, timeout=10):
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error as ex:
+        print(f"Host {host} is offline: {ex}")
+        return False
 
 def check_integrity(url):
     # Fetch the user agent for the request
@@ -272,3 +299,67 @@ def waitforact():
             print("Exiting...")
             return False
     return True
+
+def savejson(filename, mgTitle=None, mgtype=None, mggenres=None, mgstatus=None, chaptercount=None, chaptertitle=None, chapterurl=None):
+    # Set prefixes to be used for fetch and save data file;
+    title_prefix = "Title"
+    type_prefix = "Type"
+    genre_prefix = "Genres"
+    status_prefix = "Status"
+    count_prefix = "Count"
+    savechapters = "ChapterURLs"
+
+    # Initialize data with existing file contents if it exists
+    if os.path.exists(filename):
+        with open(filename, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    else:
+        data = {
+            title_prefix: mgTitle,
+            type_prefix: mgtype,
+            genre_prefix: mggenres,
+            status_prefix: mgstatus,
+            count_prefix: chaptercount,
+            savechapters: {}
+        }
+
+    # Update the data with the new values if provided
+    if mgTitle is not None:
+        data[title_prefix] = mgTitle
+    if mgtype is not None:
+        data[type_prefix] = mgtype
+    if mggenres is not None:
+        data[genre_prefix] = mggenres
+    if mgstatus is not None:
+        data[status_prefix] = mgstatus
+    if chaptercount is not None:
+        data[count_prefix] = chaptercount
+
+    # Check if chaptertitle and chapterurl are provided
+    if chaptertitle and chapterurl:
+        # Check if the chapter URL already exists
+        if chapterurl not in data[savechapters]:
+            data[savechapters][chapterurl] = chaptertitle
+        else:
+            print(f"Chapter URL '{chapterurl}' already exists. Skipping addition.")
+
+    # Open the data file in write mode
+    with open(filename, "w", encoding="utf-8") as file:
+        # Write the data to the file
+        json.dump(data, file, ensure_ascii=False, indent=4)
+    print(f"Save data to {filename} successfully.")
+
+def readjson(filename):
+    # Open the data file in read mode
+    with open(filename, "r", encoding="utf-8") as file:
+        # Read the data from the file
+        data = json.load(file)
+    
+    mgtitle = data["Title"]
+    mgtype = data["Type"]
+    mggenres = data["Genres"]
+    mgStatus = data["Status"]
+    chaptercount = data["Count"]
+    chapterurls = data["ChapterURLs"]
+
+    return mgtitle, mgtype, mggenres, mgStatus, chaptercount, chapterurls
